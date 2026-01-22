@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Fund Planner</title>
+
+```
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- KaTeX for math rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+    :root {
+        --bg-primary: #faf9f7;
+        --bg-secondary: #f0eeea;
+        --bg-card: #ffffff;
+        --text-primary: #1a1a1a;
+        --text-secondary: #5a5a5a;
+        --text-muted: #8a8a8a;
+        --accent: #2d5a4a;
+        --accent-light: #e8f0ed;
+        --border: #e0ddd8;
+        --shadow: rgba(0, 0, 0, 0.06);
+        --font-serif: 'Crimson Pro', Georgia, serif;
+        --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-serif);
+        font-size: 18px;
+        line-height: 1.7;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        min-height: 100vh;
+    }
+
+    /* Access Gate */
+    #access-gate {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .gate-content {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .gate-content h1 {
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .gate-content p {
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+
+    /* Main App */
+    #app {
+        display: none;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+    }
+
+    #app.visible {
+        display: block;
+    }
+
+    header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+        font-size: 2.2rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+    }
+
+    header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Sections */
+    section {
+        margin-bottom: 3rem;
+    }
+
+    section h2 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--accent);
+    }
+
+    /* Calculator Card */
+    .calculator-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-group label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .input-group input {
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg-primary);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-group input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .input-group .hint {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.3rem;
+    }
+
+    .toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-top: 1px solid var(--border);
+        margin-top: 0.5rem;
+    }
+
+    .toggle-group label {
+        font-size: 1rem;
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+
+    /* Custom Toggle Switch */
+    .toggle-switch {
+        position: relative;
+        width: 52px;
+        height: 28px;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: var(--border);
+        border-radius: 28px;
+        transition: 0.3s;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 3px;
+        bottom: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+        background: var(--accent);
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+
+    .btn {
+        font-family: var(--font-serif);
+        font-size: 1rem;
+        padding: 0.875rem 2rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #234a3c;
+    }
+
+    .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border);
+    }
+
+    .button-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    /* Results */
+    .results-summary {
+        background: var(--accent-light);
+        border-left: 4px solid var(--accent);
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 0 4px 4px 0;
+    }
+
+    .results-summary h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+    }
+
+    .results-summary .amount {
+        font-family: var(--font-mono);
+        font-size: 2rem;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .results-summary .details {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+    }
+
+    /* Chart */
+    .chart-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 400px;
+    }
+
+    /* Cash Flow Table */
+    .table-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 2rem 0;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .table-scroll {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    thead {
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+    }
+
+    th, td {
+        padding: 0.75rem 1rem;
+        text-align: right;
+        border-bottom: 1px solid var(--border);
+    }
+
+    th:first-child, td:first-child {
+        text-align: left;
+    }
+
+    th {
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    td {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+    }
+
+    tr:hover td {
+        background: var(--bg-secondary);
+    }
+
+    .positive {
+        color: var(--accent);
+    }
+
+    .negative {
+        color: #b54848;
+    }
+
+    /* Math Explanation */
+    .explanation {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .explanation h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem;
+        color: var(--text-primary);
+    }
+
+    .explanation h3:first-child {
+        margin-top: 0;
+    }
+
+    .explanation p {
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+    }
+
+    .explanation .katex-display {
+        margin: 1.5rem 0;
+        overflow-x: auto;
+    }
+
+    .explanation ul {
+        margin: 1rem 0 1rem 1.5rem;
+        color: var(--text-secondary);
+    }
+
+    .explanation li {
+        margin-bottom: 0.5rem;
+    }
+
+    .formula-box {
+        background: var(--bg-secondary);
+        border-radius: 6px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        overflow-x: auto;
+    }
+
+    /* Collapsible */
+    .collapsible-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .collapsible-trigger::before {
+        content: '▶';
+        font-size: 0.7rem;
+        transition: transform 0.2s;
+    }
+
+    .collapsible-trigger.open::before {
+        transform: rotate(90deg);
+    }
+
+    .collapsible-content {
+        display: none;
+        padding-top: 1rem;
+    }
+
+    .collapsible-content.open {
+        display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        body {
+            font-size: 16px;
+        }
+
+        #app {
+            padding: 1rem;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+        }
+
+        .calculator-card {
+            padding: 1.25rem;
+        }
+
+        .input-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-wrapper {
+            height: 300px;
+        }
+
+        .results-summary .amount {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+```
+
+</head>
+<body>
+    <!-- Access Gate -->
+    <div id="access-gate">
+        <div class="gate-content">
+            <h1>This page is private</h1>
+            <p>Access requires a valid link.</p>
+        </div>
+    </div>
+
+```
+<!-- Main Application -->
+<div id="app">
+    <header>
+        <h1>School Fund Planner</h1>
+        <p>Calculate required savings for school fees, accounting for inflation and investment returns.</p>
+    </header>
+
+    <!-- Calculator Section -->
+    <section id="calculator">
+        <h2>Calculator</h2>
+        <div class="calculator-card">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="annualFee">Annual Fee (£)</label>
+                    <input type="text" id="annualFee" value="15,000" inputmode="numeric">
+                    <span class="hint">Today's prices</span>
+                </div>
+                <div class="input-group">
+                    <label for="startYears">Years until school starts</label>
+                    <input type="text" id="startYears" value="5" placeholder="e.g. 5 or 5, 8">
+                    <span class="hint">Comma-separated for multiple children</span>
+                </div>
+                <div class="input-group">
+                    <label for="schoolYears">Years of schooling</label>
+                    <input type="number" id="schoolYears" value="7" min="1" max="20">
+                </div>
+                <div class="input-group">
+                    <label for="inflation">Fee inflation (%)</label>
+                    <input type="number" id="inflation" value="4" min="0" max="15" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label for="returnRate">Investment return (%)</label>
+                    <input type="number" id="returnRate" value="5" min="0" max="20" step="0.5">
+                </div>
+            </div>
+            
+            <div class="toggle-group">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="continueDuring">
+                    <span class="toggle-slider"></span>
+                </label>
+                <label for="continueDuring">Continue contributions during school years</label>
+            </div>
+
+            <div class="button-row" style="margin-top: 1.5rem;">
+                <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+                <button class="btn btn-secondary" onclick="downloadCSV()">Download CSV</button>
+            </div>
+
+            <!-- Results -->
+            <div id="results" class="results-summary" style="display: none;">
+                <h3>Required Annual Contribution</h3>
+                <div class="amount" id="resultAmount">—</div>
+                <div class="details" id="resultDetails"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chart Section -->
+    <section id="chart-section">
+        <h2>Sensitivity Analysis</h2>
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <canvas id="sensitivityChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cash Flow Table -->
+    <section id="cashflow-section">
+        <h2>Cash Flow Schedule</h2>
+        <div class="table-container">
+            <div class="table-header">
+                <h3>Year-by-Year Breakdown</h3>
+            </div>
+            <div class="table-scroll">
+                <table id="cashflowTable">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Contribution</th>
+                            <th>Fee Payment</th>
+                            <th>Investment Return</th>
+                            <th>End Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cashflowBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mathematical Explanation -->
+    <section id="explanation-section">
+        <h2 class="collapsible-trigger" onclick="toggleCollapsible(this)">Mathematical Explanation</h2>
+        <div class="collapsible-content">
+            <div class="explanation">
+                <h3>The Core Idea</h3>
+                <p>Money has <strong>time value</strong>: £1 today is worth more than £1 tomorrow because you can invest it and earn a return. This means we can't directly add or compare amounts at different points in time—we need to move them to the same point first.</p>
+
+                <p><strong>Compounding</strong> (moving forward in time): If you have £100 today and earn 5% per year, after one year you have:</p>
+                <div class="formula-box">
+                    $$100 \times (1 + 0.05) = £105$$
+                </div>
+
+                <p><strong>Discounting</strong> (moving backward in time): If you need £100 in one year, how much must you set aside today at 5%?</p>
+                <div class="formula-box">
+                    $$\frac{100}{1.05} = £95.24$$
+                </div>
+                <p>This is the <strong>present value</strong> of that future £100.</p>
+
+                <h3>Present Value of School Fees</h3>
+                <p>Fees grow with inflation. For a child starting school in year \(Y\), the fee in school year \(t\) (where \(t = 0, 1, 2, \ldots, n-1\)) is:</p>
+                <div class="formula-box">
+                    $$\text{Fee}_t = A(1+g)^t$$
+                </div>
+                <p>where \(A\) is the annual fee in today's prices, \(g\) is the inflation rate, and \(n\) is the number of school years.</p>
+
+                <p>The <strong>present value today</strong> of all fees for one child starting in year \(Y\) is:</p>
+                <div class="formula-box">
+                    $$PV_{\text{child}} = \sum_{t=0}^{n-1} \frac{A(1+g)^t}{(1+r)^{Y+t}} = \frac{A}{(1+r)^Y} \sum_{t=0}^{n-1} \left(\frac{1+g}{1+r}\right)^t$$
+                </div>
+                <p>where \(r\) is the investment return rate. For multiple children, we sum their individual present values:</p>
+                <div class="formula-box">
+                    $$PV_{\text{total}} = \sum_{i} PV_{\text{child } i}$$
+                </div>
+
+                <h3>Mode 1: Save Only Before School</h3>
+                <p>If you contribute \(C\) at the end of each year for \(Y_{\min}\) years (until the first child starts), the present value of your contributions equals:</p>
+                <div class="formula-box">
+                    $$PV_{\text{contributions}} = C \times \frac{1 - (1+r)^{-Y_{\min}}}{r}$$
+                </div>
+                <p>Setting this equal to the total fees and solving for \(C\):</p>
+                <div class="formula-box">
+                    $$C = \frac{PV_{\text{total}}}{\dfrac{1 - (1+r)^{-Y_{\min}}}{r}}$$
+                </div>
+
+                <h3>Mode 2: Continue Contributing During School</h3>
+                <p>If you contribute until the last child finishes (year \(Y_{\max} + n\)), the formula becomes:</p>
+                <div class="formula-box">
+                    $$C = \frac{PV_{\text{total}}}{\dfrac{1 - (1+r)^{-(Y_{\max}+n)}}{r}}$$
+                </div>
+                <p>This results in lower contributions since you're spreading payments over a longer period.</p>
+
+                <h3>Key Insight</h3>
+                <p>The ratio \(\frac{1+g}{1+r}\) determines how fees grow relative to your investment returns:</p>
+                <ul>
+                    <li>If \(g < r\): Fees grow slower than investments—saving gets easier over time</li>
+                    <li>If \(g > r\): Fees outpace investments—you're fighting an uphill battle</li>
+                    <li>If \(g = r\): They balance out, and each year's fee has the same present value</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // ============================================
+    // ACCESS CONTROL
+    // ============================================
+    const VALID_HASH = 'finplanner'; // Change this to your secret
+
+    function checkAccess() {
+        const hash = window.location.hash.substring(1); // Remove the #
+        if (hash === VALID_HASH) {
+            document.getElementById('access-gate').style.display = 'none';
+            document.getElementById('app').classList.add('visible');
+            return true;
+        }
+        return false;
+    }
+
+    // ============================================
+    // FINANCIAL CALCULATIONS
+    // ============================================
+    
+    function feePresentValueOneChild(A, g, r, n, startYear) {
+        /**
+         * Present value TODAY of all fees for one child.
+         * Fees are paid at the START of each school year.
+         */
+        let feeFactor;
+        if (Math.abs(r - g) < 1e-10) {
+            feeFactor = n;
+        } else {
+            const ratio = (1 + g) / (1 + r);
+            feeFactor = (1 - Math.pow(ratio, n)) / (1 - ratio);
+        }
+        const discountToToday = Math.pow(1 + r, -startYear);
+        return A * feeFactor * discountToToday;
+    }
+
+    function totalFeePresentValue(A, g, r, n, startYears) {
+        /**
+         * Present value TODAY of all fees for multiple children.
+         */
+        return startYears.reduce((sum, y) => sum + feePresentValueOneChild(A, g, r, n, y), 0);
+    }
+
+    function annualContributionBeforeOnly(pvTotal, r, years) {
+        /**
+         * Annual contribution when saving only before first child starts.
+         */
+        if (years <= 0) return Infinity;
+        if (Math.abs(r) < 1e-10) return pvTotal / years;
+        const pvAnnuityFactor = (1 - Math.pow(1 + r, -years)) / r;
+        return pvTotal / pvAnnuityFactor;
+    }
+
+    function annualContributionContinued(pvTotal, r, totalYears) {
+        /**
+         * Annual contribution when contributing until last child finishes.
+         */
+        if (totalYears <= 0) return Infinity;
+        if (Math.abs(r) < 1e-10) return pvTotal / totalYears;
+        const pvAnnuityFactor = (1 - Math.pow(1 + r, -totalYears)) / r;
+        return pvTotal / pvAnnuityFactor;
+    }
+
+    function generateCashFlows(A, g, r, n, startYears, contribution, totalYears) {
+        /**
+         * Generate year-by-year cash flow schedule.
+         */
+        const cashFlows = [];
+        let balance = 0;
+        
+        // Create a map of which years have fee payments
+        const feesByYear = {};
+        startYears.forEach(startYear => {
+            for (let t = 0; t < n; t++) {
+                const year = startYear + t;
+                const fee = A * Math.pow(1 + g, startYear + t); // Fee grows from today
+                feesByYear[year] = (feesByYear[year] || 0) + fee;
+            }
+        });
+
+        for (let year = 1; year <= totalYears; year++) {
+            const startBalance = balance;
+            const feePayment = feesByYear[year] || 0;
+            
+            // Fees paid at start of year, then investment return, then contribution at end
+            balance -= feePayment;
+            const investmentReturn = balance * r;
+            balance += investmentReturn;
+            balance += contribution;
+
+            cashFlows.push({
+                year,
+                contribution,
+                feePayment,
+                investmentReturn,
+                endBalance: balance
+            });
+        }
+
+        return cashFlows;
+    }
+
+    // ============================================
+    // UI FUNCTIONS
+    // ============================================
+
+    let chart = null;
+
+    function parseNumber(str) {
+        return parseFloat(str.replace(/[£,]/g, ''));
+    }
+
+    function formatCurrency(num) {
+        return '£' + num.toLocaleString('en-GB', { 
+            minimumFractionDigits: 0, 
+            maximumFractionDigits: 0 
+        });
+    }
+
+    function parseStartYears(str) {
+        return str.split(',')
+            .map(s => parseInt(s.trim()))
+            .filter(n => !isNaN(n) && n >= 0);
+    }
+
+    function getInputs() {
+        const A = parseNumber(document.getElementById('annualFee').value);
+        const startYears = parseStartYears(document.getElementById('startYears').value);
+        const n = parseInt(document.getElementById('schoolYears').value);
+        const g = parseFloat(document.getElementById('inflation').value) / 100;
+        const r = parseFloat(document.getElementById('returnRate').value) / 100;
+        const continueDuring = document.getElementById('continueDuring').checked;
+
+        if (isNaN(A) || startYears.length === 0 || isNaN(n) || isNaN(g) || isNaN(r)) {
+            throw new Error('Please enter valid numbers');
+        }
+
+        const firstStart = Math.min(...startYears);
+        const lastFinish = Math.max(...startYears) + n;
+
+        return { A, startYears, n, g, r, continueDuring, firstStart, lastFinish };
+    }
+
+    function calculate() {
+        try {
+            const { A, startYears, n, g, r, continueDuring, firstStart, lastFinish } = getInputs();
+
+            const pvTotal = totalFeePresentValue(A, g, r, n, startYears);
+            
+            let contribution, contributionYears;
+            if (continueDuring) {
+                contribution = annualContributionContinued(pvTotal, r, lastFinish);
+                contributionYears = lastFinish;
+            } else {
+                contribution = annualContributionBeforeOnly(pvTotal, r, firstStart);
+                contributionYears = firstStart;
+            }
+
+            // Display results
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('resultAmount').textContent = formatCurrency(contribution) + '/year';
+            
+            const childText = startYears.length === 1 
+                ? `1 child starting year ${startYears[0]}`
+                : `${startYears.length} children starting years ${startYears.join(', ')}`;
+            
+            document.getElementById('resultDetails').innerHTML = `
+                ${childText} · ${n} years of schooling · 
+                Contributing for ${contributionYears} years<br>
+                Total fees present value: ${formatCurrency(pvTotal)}
+            `;
+
+            // Update chart
+            updateChart(A, startYears, n, continueDuring, firstStart, lastFinish);
+
+            // Update cash flow table
+            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, lastFinish);
+            updateCashFlowTable(cashFlows);
+
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function updateChart(A, startYears, n, continueDuring, firstStart, lastFinish) {
+        const inflationRates = [0, 0.02, 0.03, 0.04, 0.05, 0.06];
+        const returnRates = [0.03, 0.04, 0.05, 0.06, 0.07, 0.08];
+        const colors = [
+            'rgb(45, 90, 74)',
+            'rgb(70, 130, 110)',
+            'rgb(100, 160, 140)',
+            'rgb(180, 100, 80)',
+            'rgb(200, 130, 100)',
+            'rgb(220, 160, 130)'
+        ];
+
+        const datasets = returnRates.map((r, idx) => {
+            const contributions = inflationRates.map(g => {
+                const pvTotal = totalFeePresentValue(A, g, r, n, startYears);
+                if (continueDuring) {
+                    return annualContributionContinued(pvTotal, r, lastFinish);
+                } else {
+                    return annualContributionBeforeOnly(pvTotal, r, firstStart);
+                }
+            });
+
+            return {
+                label: `${(r * 100).toFixed(0)}% return`,
+                data: contributions,
+                borderColor: colors[idx],
+                backgroundColor: colors[idx],
+                tension: 0.3,
+                pointRadius: 4
+            };
+        });
+
+        const ctx = document.getElementById('sensitivityChart').getContext('2d');
+
+        if (chart) {
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: inflationRates.map(g => `${(g * 100).toFixed(0)}%`),
+                datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Required Annual Contribution vs. Inflation Rate',
+                        font: { size: 14, family: "'Crimson Pro', serif" }
+                    },
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Fee Inflation Rate'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Annual Contribution (£)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateCashFlowTable(cashFlows) {
+        const tbody = document.getElementById('cashflowBody');
+        tbody.innerHTML = cashFlows.map(cf => `
+            <tr>
+                <td>${cf.year}</td>
+                <td class="positive">+${formatCurrency(cf.contribution)}</td>
+                <td class="${cf.feePayment > 0 ? 'negative' : ''}">${cf.feePayment > 0 ? '-' + formatCurrency(cf.feePayment) : '—'}</td>
+                <td class="${cf.investmentReturn >= 0 ? 'positive' : 'negative'}">${cf.investmentReturn >= 0 ? '+' : ''}${formatCurrency(cf.investmentReturn)}</td>
+                <td>${formatCurrency(cf.endBalance)}</td>
+            </tr>
+        `).join('');
+    }
+
+    function downloadCSV() {
+        try {
+            const { A, startYears, n, g, r, continueDuring, firstStart, lastFinish } = getInputs();
+            const pvTotal = totalFeePresentValue(A, g, r, n, startYears);
+            
+            let contribution;
+            if (continueDuring) {
+                contribution = annualContributionContinued(pvTotal, r, lastFinish);
+            } else {
+                contribution = annualContributionBeforeOnly(pvTotal, r, firstStart);
+            }
+
+            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, lastFinish);
+
+            // Build CSV
+            const headers = ['Year', 'Contribution', 'Fee Payment', 'Investment Return', 'End Balance'];
+            const rows = cashFlows.map(cf => [
+                cf.year,
+                cf.contribution.toFixed(2),
+                cf.feePayment.toFixed(2),
+                cf.investmentReturn.toFixed(2),
+                cf.endBalance.toFixed(2)
+            ]);
+
+            // Add summary at top
+            const summary = [
+                ['School Fund Planner - Cash Flow Schedule'],
+                [''],
+                ['Parameters:'],
+                ['Annual Fee (today)', A],
+                ['Children start years', startYears.join('; ')],
+                ['Years of schooling', n],
+                ['Fee inflation rate', (g * 100).toFixed(1) + '%'],
+                ['Investment return rate', (r * 100).toFixed(1) + '%'],
+                ['Continue during school', continueDuring ? 'Yes' : 'No'],
+                [''],
+                ['Results:'],
+                ['Required annual contribution', contribution.toFixed(2)],
+                ['Total fees present value', pvTotal.toFixed(2)],
+                [''],
+                headers,
+                ...rows
+            ];
+
+            const csvContent = summary.map(row => 
+                Array.isArray(row) ? row.join(',') : row
+            ).join('\n');
+
+            // Download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'school_fund_cashflows.csv';
+            link.click();
+
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function toggleCollapsible(trigger) {
+        trigger.classList.toggle('open');
+        const content = trigger.nextElementSibling;
+        content.classList.toggle('open');
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (checkAccess()) {
+            // Render KaTeX
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+
+            // Initial calculation
+            calculate();
+        }
+    });
+
+    // Also check on hash change (in case someone adds the hash while on the page)
+    window.addEventListener('hashchange', function() {
+        if (checkAccess()) {
+            location.reload();
+        }
+    });
+</script>
+```
+
+</body>
+</html>
+
