@@ -531,6 +531,11 @@
                     <input type="number" id="schoolYears" value="7" min="1" max="20">
                 </div>
                 <div class="input-group">
+                    <label for="delayYears">Saving starts in (years)</label>
+                    <input type="number" id="delayYears" value="0" min="0" max="20">
+                    <span class="hint">0 = start now</span>
+                </div>
+                <div class="input-group">
                     <label for="inflation">Fee inflation (%)</label>
                     <input type="number" id="inflation" value="4" min="0" max="15" step="0.5">
                 </div>
@@ -573,6 +578,7 @@
                     <li><strong>Annual Fee</strong>: The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
                     <li><strong>Years until school starts</strong>: How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
                     <li><strong>Years of schooling</strong>: The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
+                    <li><strong>Saving starts in (years)</strong>: How many years from now before you begin saving. Use 0 to start immediately. This shifts the timeline so that "Year 1" in the calculations is when saving begins, with fees already inflated accordingly.</li>
                     <li><strong>Fee inflation</strong>: Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3-5% per year).</li>
                     <li><strong>Investment return</strong>: Expected annual return on your savings. A balanced portfolio might return 4-6% on average over the long term.</li>
                     <li><strong>Continue contributions during school</strong>: If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
@@ -645,16 +651,29 @@
                 </div>
 
                 <h3>2. Problem Setup and Notation</h3>
-                <p>We have \(K\) children, where child \(k\) starts school in year \(Y_k\). Each child attends for \(n\) years. We define:</p>
+                <p>We have \(K\) children, where child \(k\) starts school in year \(Y_k\) (measured from today). Each child attends for \(n\) years. We also allow for a <strong>delay</strong> \(D \geq 0\) before saving begins. The core parameters are:</p>
                 <ul>
                     <li>\(A\) = base annual fee (today's prices)</li>
                     <li>\(g\) = annual fee inflation rate</li>
                     <li>\(r\) = annual investment return rate</li>
                     <li>\(n\) = years of schooling per child</li>
-                    <li>\(Y_k\) = year when child \(k\) starts school (for \(k = 1, \ldots, K\))</li>
-                    <li>\(Y_{\min} = \min_k Y_k\) = year when first child starts</li>
-                    <li>\(Y_{\max} = \max_k Y_k\) = year when last child starts</li>
-                    <li>\(T = Y_{\max} + n - 1\) = final year (when last child finishes)</li>
+                    <li>\(D\) = years before saving starts (0 = start now)</li>
+                    <li>\(Y_k\) = year when child \(k\) starts school, measured from today</li>
+                </ul>
+
+                <p><strong>Timeline transformation:</strong> When \(D > 0\), we shift the timeline so that "Year 1" is when saving begins. This requires transforming the inputs:</p>
+                <div class="formula-box">
+                    $$A' = A \cdot (1+g)^D \quad \text{(fees have already inflated by } D \text{ years)}$$
+                </div>
+                <div class="formula-box">
+                    $$Y'_k = Y_k - D \quad \text{(school is } D \text{ years closer from when saving starts)}$$
+                </div>
+
+                <p>All subsequent formulas use these transformed values \(A'\) and \(Y'_k\). For simplicity, we drop the primes and write \(A\) and \(Y_k\) with the understanding that they represent the values at the time saving begins. We then define:</p>
+                <ul>
+                    <li>\(Y_{\min} = \min_k Y_k\) = years until first child starts (from when saving begins)</li>
+                    <li>\(Y_{\max} = \max_k Y_k\) = years until last child starts</li>
+                    <li>\(T = Y_{\max} + n - 1\) = final year of the saving timeline</li>
                 </ul>
 
                 <h3>3. Fee Schedule for Multiple Children</h3>
@@ -1107,26 +1126,38 @@
     }
 
     function getInputs() {
-        const A = parseNumber(document.getElementById('annualFee').value);
-        const startYears = parseStartYears(document.getElementById('startYears').value);
+        const A_original = parseNumber(document.getElementById('annualFee').value);
+        const startYears_original = parseStartYears(document.getElementById('startYears').value);
         const n = parseInt(document.getElementById('schoolYears').value);
         const g = parseFloat(document.getElementById('inflation').value) / 100;
         const r = parseFloat(document.getElementById('returnRate').value) / 100;
+        const D = parseInt(document.getElementById('delayYears').value) || 0;
         const continueDuring = document.getElementById('continueDuring').checked;
 
-        if (isNaN(A) || startYears.length === 0 || isNaN(n) || isNaN(g) || isNaN(r)) {
+        if (isNaN(A_original) || startYears_original.length === 0 || isNaN(n) || isNaN(g) || isNaN(r)) {
             throw new Error('Please enter valid numbers');
         }
+
+        const firstStart_original = Math.min(...startYears_original);
+        if (D >= firstStart_original) {
+            throw new Error('Saving must start before school begins (delay must be less than years until school starts)');
+        }
+
+        // Transform inputs: shift timeline so year 1 = when saving starts
+        // A' = A × (1+g)^D (fee has already inflated by D years)
+        // Y' = Y - D (school is D years closer from when we start saving)
+        const A = A_original * Math.pow(1 + g, D);
+        const startYears = startYears_original.map(y => y - D);
 
         const firstStart = Math.min(...startYears);
         const lastFeeYear = Math.max(...startYears) + n - 1;
 
-        return { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear };
+        return { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear, D, A_original, startYears_original };
     }
 
     function calculate() {
         try {
-            const { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear } = getInputs();
+            const { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear, D, A_original, startYears_original } = getInputs();
 
             const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring);
             const { contribution, bindingYear, pvTotal, contributionYears } = result;
@@ -1134,15 +1165,17 @@
             document.getElementById('results').style.display = 'block';
             document.getElementById('resultAmount').textContent = formatCurrency(contribution) + '/year';
 
-            const childText = startYears.length === 1
-                ? `1 child starting year ${startYears[0]}`
-                : `${startYears.length} children starting years ${startYears.join(', ')}`;
+            const childText = startYears_original.length === 1
+                ? `1 child starting in ${startYears_original[0]} years`
+                : `${startYears_original.length} children starting in years ${startYears_original.join(', ')}`;
+
+            const delayText = D > 0 ? `Saving starts in ${D} years · ` : '';
 
             document.getElementById('resultDetails').innerHTML = `
-                ${childText} · ${n} years of schooling ·
-                Contributing for ${contributionYears} years<br>
+                ${childText} · ${n} years of schooling<br>
+                ${delayText}Contributing for ${contributionYears} years<br>
                 Total fees present value: ${formatCurrency(pvTotal)}<br>
-                <strong>Binding constraint: Year ${bindingYear}</strong> (account reaches zero)
+                <strong>Binding constraint: Year ${bindingYear}</strong> (of saving timeline)
             `;
 
             updateChart(A, startYears, n, continueDuring, g, r);
@@ -1275,7 +1308,7 @@
 
     function downloadCSV() {
         try {
-            const { A, startYears, n, g, r, continueDuring } = getInputs();
+            const { A, startYears, n, g, r, continueDuring, D, A_original, startYears_original } = getInputs();
             const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring);
             const { contribution, bindingYear, pvTotal } = result;
 
@@ -1295,9 +1328,10 @@
                 ['School Fund Planner - Cash Flow Schedule'],
                 [''],
                 ['Parameters:'],
-                ['Annual Fee (today)', A],
-                ['Children start years', startYears.join('; ')],
+                ['Annual Fee (today)', A_original],
+                ['Children start years (from today)', startYears_original.join('; ')],
                 ['Years of schooling', n],
+                ['Delay before saving (years)', D],
                 ['Fee inflation rate', (g * 100).toFixed(1) + '%'],
                 ['Investment return rate', (r * 100).toFixed(1) + '%'],
                 ['Continue during school', continueDuring ? 'Yes' : 'No'],
@@ -1305,7 +1339,7 @@
                 ['Results:'],
                 ['Required annual contribution', contribution.toFixed(2)],
                 ['Total fees present value', pvTotal.toFixed(2)],
-                ['Binding constraint year', bindingYear],
+                ['Binding constraint year (of saving)', bindingYear],
                 [''],
                 headers,
                 ...rows
