@@ -615,138 +615,295 @@
         <h2 class="collapsible-trigger" onclick="toggleCollapsible(this)">Mathematical Explanation</h2>
         <div class="collapsible-content">
             <div class="explanation">
-                <h3>The Core Idea</h3>
-                <p>Money has <strong>time value</strong>: £1 today is worth more than £1 tomorrow because you can invest it and earn a return. This means we can't directly add or compare amounts at different points in time—we need to move them to the same point first.</p>
+                <h3>1. Time Value of Money</h3>
+                <p>Money has <strong>time value</strong>: £1 today is worth more than £1 tomorrow because you can invest it and earn a return. This means we cannot directly add or compare amounts at different points in time—we must first move them to a common reference point.</p>
 
-                <p><strong>Compounding</strong> (moving forward in time): If you have £100 today and earn 5% per year, in one year you have:</p>
+                <p><strong>Compounding</strong> (moving forward in time): If you invest £\(P\) today at annual return \(r\), after one year you have:</p>
                 <div class="formula-box">
-                    $$100 \times (1 + 0.05) = £105$$
+                    $$P \times (1 + r)$$
                 </div>
-                <p>In two years:</p>
+                <p>After \(t\) years, the balance grows to:</p>
                 <div class="formula-box">
-                    $$100 \times (1.05)^2 = £110.25$$
+                    $$P \times (1 + r)^t$$
                 </div>
 
-                <p><strong>Discounting</strong> (moving backward in time): If you need £100 in one year, how much must you set aside today at 5%?</p>
+                <p><strong>Discounting</strong> (moving backward in time): If you need £\(F\) in \(t\) years, the amount you must set aside today (the <strong>present value</strong>) is:</p>
                 <div class="formula-box">
-                    $$\frac{100}{1.05} = £95.24$$
+                    $$PV = \frac{F}{(1+r)^t} = F \times (1+r)^{-t}$$
                 </div>
-                <p>This is the <strong>present value</strong> of that future £100.</p>
 
-                <h3>The Liquidity Constraint Problem</h3>
-                <p>A naive approach calculates the present value of all fees and finds a contribution that matches it. However, this only ensures you end up with £0 at the final year—<strong>it doesn't guarantee you have enough money at every point in time</strong>.</p>
-
-                <p>With multiple children starting at different times, fee payments can create "withdrawal humps" that exceed what the accumulated savings can cover, causing the account to go negative. This calculator uses a <strong>liquidity-constrained</strong> approach that ensures the account balance never goes negative.</p>
-
-                <h3>Mathematical Framework</h3>
-                <p>Let's define the key variables:</p>
+                <h3>2. Problem Setup and Notation</h3>
+                <p>We have \(K\) children, where child \(k\) starts school in year \(Y_k\). Each child attends for \(n\) years. We define:</p>
                 <ul>
-                    <li>\(T\) = final year (when last child finishes school)</li>
-                    <li>\(r\) = annual investment return rate</li>
+                    <li>\(A\) = base annual fee (today's prices)</li>
                     <li>\(g\) = annual fee inflation rate</li>
-                    <li>\(F_t\) = total fees due in year \(t\)</li>
-                    <li>\(I_t\) = contribution indicator (1 if contributing in year \(t\), 0 otherwise)</li>
-                    <li>\(C\) = annual contribution (what we're solving for)</li>
-                    <li>\(B_t\) = account balance at end of year \(t\)</li>
+                    <li>\(r\) = annual investment return rate</li>
+                    <li>\(n\) = years of schooling per child</li>
+                    <li>\(Y_k\) = year when child \(k\) starts school (for \(k = 1, \ldots, K\))</li>
+                    <li>\(Y_{\min} = \min_k Y_k\) = year when first child starts</li>
+                    <li>\(Y_{\max} = \max_k Y_k\) = year when last child starts</li>
+                    <li>\(T = Y_{\max} + n - 1\) = final year (when last child finishes)</li>
                 </ul>
 
-                <h3>Balance Evolution</h3>
-                <p>At the end of each year \(t\):</p>
+                <h3>3. Fee Schedule for Multiple Children</h3>
+                <p>School fees grow with inflation from year 1. In calendar year \(t\), the fee for one child in school is:</p>
+                <div class="formula-box">
+                    $$\text{Fee in year } t = A \cdot (1+g)^{t-1}$$
+                </div>
+
+                <p>Child \(k\) is in school during years \(Y_k, Y_k+1, \ldots, Y_k+n-1\). We define an indicator function:</p>
+                <div class="formula-box">
+                    $$\mathbf{1}_k(t) = \begin{cases} 1 & \text{if } Y_k \leq t \leq Y_k + n - 1 \\ 0 & \text{otherwise} \end{cases}$$
+                </div>
+
+                <p>The <strong>total fees in year \(t\)</strong> sum across all children in school that year:</p>
+                <div class="formula-box">
+                    $$F_t = A \cdot (1+g)^{t-1} \cdot \sum_{k=1}^{K} \mathbf{1}_k(t) = A \cdot (1+g)^{t-1} \cdot N_t \tag{1}$$
+                </div>
+                <p>where \(N_t = \sum_{k=1}^{K} \mathbf{1}_k(t)\) is the number of children in school during year \(t\).</p>
+
+                <p><strong>Example:</strong> Two children with \(Y_1 = 2\) and \(Y_2 = 5\), each attending for \(n = 3\) years:</p>
+                <table class="example-table">
+                    <thead>
+                        <tr><th>Year \(t\)</th><th>Child 1</th><th>Child 2</th><th>\(N_t\)</th><th>Fee \(F_t\)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>—</td><td>—</td><td>0</td><td>0</td></tr>
+                        <tr><td>2</td><td>Year 1</td><td>—</td><td>1</td><td>\(A(1+g)^1\)</td></tr>
+                        <tr><td>3</td><td>Year 2</td><td>—</td><td>1</td><td>\(A(1+g)^2\)</td></tr>
+                        <tr><td>4</td><td>Year 3</td><td>—</td><td>1</td><td>\(A(1+g)^3\)</td></tr>
+                        <tr><td>5</td><td>—</td><td>Year 1</td><td>1</td><td>\(A(1+g)^4\)</td></tr>
+                        <tr><td>6</td><td>—</td><td>Year 2</td><td>1</td><td>\(A(1+g)^5\)</td></tr>
+                        <tr><td>7</td><td>—</td><td>Year 3</td><td>1</td><td>\(A(1+g)^6\)</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>4. Contribution Schedule</h3>
+                <p>Let \(I_t \in \{0, 1\}\) indicate whether we contribute in year \(t\), and let \(C\) be the annual contribution amount (what we solve for).</p>
+
+                <p><strong>Mode 1</strong> (save only before school starts):</p>
+                <div class="formula-box">
+                    $$I_t = \begin{cases} 1 & \text{if } t < Y_{\min} \\ 0 & \text{otherwise} \end{cases}$$
+                </div>
+
+                <p><strong>Mode 2</strong> (continue contributing during school):</p>
+                <div class="formula-box">
+                    $$I_t = 1 \quad \text{for all } t \in \{1, 2, \ldots, T\}$$
+                </div>
+
+                <h3>5. Balance Evolution</h3>
+                <p>Let \(B_t\) denote the account balance at the end of year \(t\). The timing within each year is:</p>
                 <ol>
-                    <li>Previous balance \(B_{t-1}\) grows by factor \((1+r)\)</li>
-                    <li>Add contribution \(C\) if \(I_t = 1\)</li>
+                    <li>Start with balance \(B_{t-1}\) from previous year</li>
+                    <li>Balance grows by investment return: \(B_{t-1} \times (1+r)\)</li>
+                    <li>Add contribution \(I_t \cdot C\)</li>
                     <li>Pay fees \(F_t\)</li>
                 </ol>
 
-                <p>This gives the recurrence:</p>
+                <p>This gives the <strong>recurrence relation</strong>:</p>
                 <div class="formula-box">
-                    $$B_t = (1+r) \cdot B_{t-1} + I_t \cdot C - F_t$$
-                </div>
-                <p>with \(B_0 = 0\).</p>
-
-                <h3>Closed-Form Solution</h3>
-                <p>Unwinding the recurrence:</p>
-                <div class="formula-box">
-                    $$B_t = C \cdot \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s} - \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
+                    $$B_t = (1+r) \cdot B_{t-1} + I_t \cdot C - F_t, \quad \text{with } B_0 = 0 \tag{2}$$
                 </div>
 
-                <p>Define two key quantities:</p>
-
-                <p><strong>Accumulated Contribution Factor:</strong></p>
+                <h3>6. Deriving the Closed-Form Solution</h3>
+                <p>We solve the recurrence by expanding it step by step:</p>
                 <div class="formula-box">
-                    $$A_t = \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s}$$
+                    $$\begin{aligned}
+                    B_1 &= (1+r) \cdot 0 + I_1 C - F_1 = I_1 C - F_1 \\[8pt]
+                    B_2 &= (1+r) B_1 + I_2 C - F_2 \\
+                        &= (1+r)(I_1 C - F_1) + I_2 C - F_2 \\
+                        &= I_1 C (1+r) + I_2 C - F_1(1+r) - F_2 \\[8pt]
+                    B_3 &= (1+r) B_2 + I_3 C - F_3 \\
+                        &= I_1 C (1+r)^2 + I_2 C (1+r) + I_3 C - F_1(1+r)^2 - F_2(1+r) - F_3
+                    \end{aligned}$$
                 </div>
-                <p>This is the future value at year \(t\) of £1 contributed in each contributing year up to \(t\).</p>
 
-                <p><strong>Accumulated Fee Value:</strong></p>
+                <p>The pattern becomes clear. At year \(t\):</p>
                 <div class="formula-box">
-                    $$V_t = \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
+                    $$B_t = \sum_{s=1}^{t} I_s \cdot C \cdot (1+r)^{t-s} - \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
+                </div>
+
+                <p>Factoring out \(C\):</p>
+                <div class="formula-box">
+                    $$B_t = C \cdot \underbrace{\sum_{s=1}^{t} I_s \cdot (1+r)^{t-s}}_{A_t} - \underbrace{\sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}}_{V_t}$$
+                </div>
+
+                <p>We define the <strong>accumulated contribution factor</strong>:</p>
+                <div class="formula-box">
+                    $$A_t = \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s} \tag{3}$$
+                </div>
+                <p>This is the future value at year \(t\) of £1 contributed in each contributing year.</p>
+
+                <p>And the <strong>accumulated fee value</strong>:</p>
+                <div class="formula-box">
+                    $$V_t = \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s} \tag{4}$$
                 </div>
                 <p>This is the future value at year \(t\) of all fees paid through year \(t\).</p>
 
-                <p>So we have:</p>
+                <p>Substituting (3) and (4) into our expanded recurrence gives the <strong>closed-form balance equation</strong>:</p>
                 <div class="formula-box">
-                    $$B_t = C \cdot A_t - V_t$$
+                    $$B_t = C \cdot A_t - V_t \tag{5}$$
                 </div>
 
-                <h3>The Liquidity Constraint</h3>
-                <p>For the account to remain solvent, we need \(B_t \geq 0\) for all \(t\). This requires:</p>
+                <h3>7. Simplifying \(A_t\) Using Geometric Series</h3>
+                <p>In <strong>Mode 2</strong> (contribute every year), \(I_s = 1\) for all \(s\), so:</p>
                 <div class="formula-box">
-                    $$C \cdot A_t \geq V_t \quad \Rightarrow \quad C \geq \frac{V_t}{A_t}$$
-                </div>
-                <p>for all years \(t\) where \(A_t > 0\).</p>
-
-                <h3>The Solution</h3>
-                <p>The minimum contribution satisfying all liquidity constraints is:</p>
-                <div class="formula-box">
-                    $$\boxed{C_{\min} = \max_{t \in \{1, \ldots, T\}} \left( \frac{V_t}{A_t} \right)}$$
+                    $$A_t = \sum_{s=1}^{t} (1+r)^{t-s} = (1+r)^{t-1} + (1+r)^{t-2} + \cdots + (1+r)^0$$
                 </div>
 
-                <p>The year \(t^*\) where this maximum occurs is the <strong>binding constraint year</strong>—the point where the account balance is exactly zero and under maximum stress. In the cash flow table, this year is highlighted.</p>
-
-                <h3>Why This Matters</h3>
-                <p>A naive present-value approach would compute:</p>
+                <p>This is a geometric series with first term \(a = 1\), common ratio \(q = (1+r)\), and \(t\) terms. Recall the formula for the sum of a geometric series:</p>
                 <div class="formula-box">
-                    $$C_{\text{naive}} = \frac{V_T}{A_T}$$
+                    $$\sum_{i=0}^{n-1} q^i = \frac{q^n - 1}{q - 1} \tag{6}$$
                 </div>
-                <p>This only enforces \(B_T = 0\) at the final year. But with multiple children at different start times, an intermediate year might have:</p>
+
+                <p>Applying (6) with \(q = 1+r\):</p>
+                <div class="formula-box">
+                    $$A_t = \frac{(1+r)^t - 1}{(1+r) - 1} = \frac{(1+r)^t - 1}{r} \tag{7}$$
+                </div>
+
+                <p>In <strong>Mode 1</strong> (contribute only for years \(1, \ldots, Y_{\min}-1\)), for \(t \geq Y_{\min}\):</p>
+                <div class="formula-box">
+                    $$A_t = \sum_{s=1}^{Y_{\min}-1} (1+r)^{t-s} = (1+r)^{t-1} + \cdots + (1+r)^{t-Y_{\min}+1}$$
+                </div>
+
+                <p>This is a geometric series with \(Y_{\min}-1\) terms, first term \((1+r)^{t-Y_{\min}+1}\), ratio \((1+r)\):</p>
+                <div class="formula-box">
+                    $$A_t = (1+r)^{t-Y_{\min}+1} \cdot \frac{(1+r)^{Y_{\min}-1} - 1}{r} = \frac{(1+r)^t - (1+r)^{t-Y_{\min}+1}}{r}$$
+                </div>
+
+                <h3>8. Simplifying \(V_t\) for Multiple Children</h3>
+                <p>The accumulated fee value is:</p>
+                <div class="formula-box">
+                    $$V_t = \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
+                </div>
+
+                <p>Substituting \(F_s = A(1+g)^{s-1} \cdot N_s\) where \(N_s\) is the number of children in school:</p>
+                <div class="formula-box">
+                    $$V_t = A \sum_{s=1}^{t} N_s \cdot (1+g)^{s-1} \cdot (1+r)^{t-s}$$
+                </div>
+
+                <p>For a <strong>single child</strong> starting in year \(Y\), we have \(N_s = 1\) for \(s \in \{Y, \ldots, Y+n-1\}\). The upper limit \(\min(t, Y+n-1)\) ensures we only sum over years when the child is actually in school:</p>
+                <div class="formula-box">
+                    $$V_t^{(\text{child})} = A \sum_{s=Y}^{\min(t, Y+n-1)} (1+g)^{s-1} (1+r)^{t-s}$$
+                </div>
+
+                <p>Let \(\rho = \frac{1+g}{1+r}\). Factoring out \((1+r)^t\) and rewriting:</p>
+                <div class="formula-box">
+                    $$V_t^{(\text{child})} = A (1+r)^t \sum_{s=Y}^{\min(t, Y+n-1)} \left(\frac{1+g}{1+r}\right)^{s-1} \cdot \frac{1}{1+g} = \frac{A (1+r)^t}{1+g} \sum_{s=Y}^{\min(t, Y+n-1)} \rho^{s-1}$$
+                </div>
+
+                <p>The inner sum is geometric. When summing from \(s = Y\) to \(s = m\) (where \(m = \min(t, Y+n-1)\)), we have \(m - Y + 1\) terms starting at \(\rho^{Y-1}\). Applying (6):</p>
+                <div class="formula-box">
+                    $$\sum_{s=Y}^{m} \rho^{s-1} = \rho^{Y-1} + \rho^Y + \cdots + \rho^{m-1} = \rho^{Y-1} \cdot \frac{1 - \rho^{m-Y+1}}{1 - \rho}$$
+                </div>
+
+                <p>For <strong>multiple children</strong>, the total accumulated fee value is:</p>
+                <div class="formula-box">
+                    $$V_t = \sum_{k=1}^{K} V_t^{(\text{child } k)}$$
+                </div>
+
+                <h3>9. The Liquidity Constraint</h3>
+                <p>The fundamental requirement is that the account balance must never go negative:</p>
+                <div class="formula-box">
+                    $$B_t \geq 0 \quad \text{for all } t \in \{1, 2, \ldots, T\} \tag{8}$$
+                </div>
+
+                <p>Substituting the closed-form balance (5) into constraint (8):</p>
+                <div class="formula-box">
+                    $$C \cdot A_t - V_t \geq 0 \quad \Rightarrow \quad C \geq \frac{V_t}{A_t} \tag{9}$$
+                </div>
+
+                <p>Constraint (9) must hold for every year \(t\) where \(A_t > 0\). Therefore, the minimum contribution that satisfies all constraints is:</p>
+                <div class="formula-box">
+                    $$C_{\min} = \max_{t \in \{1, \ldots, T\}} \frac{V_t}{A_t} \tag{10}$$
+                </div>
+
+                <p>The year \(t^*\) where this maximum is achieved is the <strong>binding constraint year</strong>. At this year, substituting (10) into (5):</p>
+                <div class="formula-box">
+                    $$B_{t^*} = C_{\min} \cdot A_{t^*} - V_{t^*} = \frac{V_{t^*}}{A_{t^*}} \cdot A_{t^*} - V_{t^*} = 0 \tag{11}$$
+                </div>
+
+                <h3>10. Why the Naive Approach Can Fail</h3>
+                <p>A naive present-value approach sets contributions equal to fees in present value terms, which is equivalent to enforcing only the terminal constraint \(B_T = 0\) from (8):</p>
+                <div class="formula-box">
+                    $$C_{\text{naive}} = \frac{V_T}{A_T} \tag{12}$$
+                </div>
+
+                <p>Comparing (12) with our solution (10), the naive approach fails when an intermediate year \(t < T\) has:</p>
                 <div class="formula-box">
                     $$\frac{V_t}{A_t} > \frac{V_T}{A_T}$$
                 </div>
-                <p>In this case, the naive contribution would cause a negative balance at year \(t\), requiring you to borrow money—which breaks the model.</p>
 
-                <h3>Fee Schedule</h3>
-                <p>Fees grow with inflation from year 1. For a child starting in year \(Y\) with \(n\) years of schooling and base annual fee \(A\):</p>
-                <div class="formula-box">
-                    $$F_t^{(\text{child})} = \begin{cases} A \cdot (1+g)^{t-1} & \text{if } Y \leq t < Y + n \\ 0 & \text{otherwise} \end{cases}$$
-                </div>
-                <p>Total fees in year \(t\) sum across all children in school that year.</p>
+                <p>In this case, using \(C_{\text{naive}}\) in equation (5) gives \(B_t = C_{\text{naive}} \cdot A_t - V_t < 0\)—the account goes negative, requiring borrowing.</p>
 
-                <h3>Contribution Modes</h3>
+                <p><strong>When does this happen?</strong> From equations (3) and (4), the ratio \(V_t / A_t\) increases when fees are paid (adding to \(V_t\)) and decreases when contributions are made without corresponding fees (adding to \(A_t\)). An intermediate year becomes binding when:</p>
                 <ul>
-                    <li><strong>Mode 1</strong> (stop when school starts): \(I_t = 1\) for \(t < Y_{\min}\), else 0</li>
-                    <li><strong>Mode 2</strong> (continue during school): \(I_t = 1\) for all \(t \leq T\)</li>
+                    <li>Multiple children overlap, creating a "fee hump"</li>
+                    <li>Contributions stop early (Mode 1) while fees continue</li>
+                    <li>A gap between children allows the ratio to decrease before later fees</li>
                 </ul>
 
-                <h3>Worked Example</h3>
-                <p>Consider two children:</p>
+                <h3>11. Worked Example</h3>
+                <p>Consider:</p>
                 <ul>
-                    <li>Child 1: starts year 2, 3 years of school</li>
-                    <li>Child 2: starts year 6, 3 years of school</li>
-                    <li>Base fee: £10,000/year, inflation \(g = 3\%\)</li>
-                    <li>Investment return \(r = 5\%\)</li>
-                    <li>Mode 2: contribute through all years</li>
+                    <li>Three children starting together: \(Y_1 = Y_2 = Y_3 = 2\)</li>
+                    <li>One child starting later: \(Y_4 = 6\)</li>
+                    <li>School duration: \(n = 3\) years each</li>
+                    <li>Base fee: \(A = £10{,}000\)</li>
+                    <li>Inflation: \(g = 0\%\) (to simplify)</li>
+                    <li>Return: \(r = 5\%\)</li>
+                    <li>Mode 2: contribute all years</li>
                 </ul>
 
-                <p>The algorithm computes \(V_t / A_t\) for each year and finds the maximum. If Child 1's fees create a large early withdrawal before later contributions accumulate, an intermediate year becomes the binding constraint—requiring a higher contribution than the naive formula would suggest.</p>
+                <p><strong>Fee schedule:</strong></p>
+                <table class="example-table">
+                    <thead>
+                        <tr><th>Year</th><th>Children in school</th><th>Fee \(F_t\)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>0</td><td>£0</td></tr>
+                        <tr><td>2</td><td>3 (children 1,2,3)</td><td>£30,000</td></tr>
+                        <tr><td>3</td><td>3</td><td>£30,000</td></tr>
+                        <tr><td>4</td><td>3</td><td>£30,000</td></tr>
+                        <tr><td>5</td><td>0</td><td>£0</td></tr>
+                        <tr><td>6</td><td>1 (child 4)</td><td>£10,000</td></tr>
+                        <tr><td>7</td><td>1</td><td>£10,000</td></tr>
+                        <tr><td>8</td><td>1</td><td>£10,000</td></tr>
+                    </tbody>
+                </table>
 
-                <h3>Key Insight</h3>
-                <p>The ratio \(\rho = \frac{1+g}{1+r}\) determines how fees grow relative to your investment returns:</p>
+                <p><strong>Computing \(A_t\) and \(V_t\)</strong> using equations (3) and (4) with \(r = 0.05\):</p>
+                <table class="example-table">
+                    <thead>
+                        <tr><th>Year \(t\)</th><th>\(A_t\)</th><th>\(V_t\)</th><th>\(V_t / A_t\)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>1.000</td><td>0</td><td>0</td></tr>
+                        <tr><td>2</td><td>2.050</td><td>30,000</td><td>14,634</td></tr>
+                        <tr><td>3</td><td>3.153</td><td>61,500</td><td>19,513</td></tr>
+                        <tr><td>4</td><td>4.310</td><td>94,575</td><td><strong>21,943</strong></td></tr>
+                        <tr><td>5</td><td>5.526</td><td>99,304</td><td>17,974</td></tr>
+                        <tr><td>6</td><td>6.802</td><td>114,269</td><td>16,799</td></tr>
+                        <tr><td>7</td><td>8.142</td><td>129,982</td><td>15,965</td></tr>
+                        <tr><td>8</td><td>9.549</td><td>146,481</td><td>15,340</td></tr>
+                    </tbody>
+                </table>
+
+                <p>Applying equation (10), the maximum ratio occurs at <strong>year 4</strong> (value £21,943), not year 8. This is the binding constraint year \(t^* = 4\). Using the naive approach (12) would give \(C_{\text{naive}} = 15{,}340\), but substituting into (5) gives \(B_4 = 15{,}340 \times 4.310 - 94{,}575 = -28{,}470 < 0\)—the account goes negative.</p>
+
+                <p>The correct minimum contribution from (10) is \(C_{\min} = £21{,}943\) per year, ensuring \(B_t \geq 0\) for all \(t\) as required by (8).</p>
+
+                <h3>12. Key Insights</h3>
+                <p>The ratio \(\rho = \frac{1+g}{1+r}\) (appearing in the fee calculations) determines the relationship between fee growth and investment returns:</p>
                 <ul>
-                    <li>If \(g < r\) (so \(\rho < 1\)): Fees grow slower than investments—saving gets easier over time</li>
-                    <li>If \(g > r\) (so \(\rho > 1\)): Fees outpace investments—you're fighting an uphill battle</li>
-                    <li>If \(g = r\) (so \(\rho = 1\)): They balance out, and each year's fee has the same present value</li>
+                    <li>If \(g < r\) (so \(\rho < 1\)): Investment returns outpace fee inflation—the burden lightens over time</li>
+                    <li>If \(g > r\) (so \(\rho > 1\)): Fees grow faster than investments—an uphill battle</li>
+                    <li>If \(g = r\) (so \(\rho = 1\)): They balance out; each year's fee has the same present value</li>
                 </ul>
+
+                <p>In <strong>Mode 1</strong>, once contributions stop (\(I_t = 0\)), examining equations (3) and (4) shows that \(A_t\) only grows by compounding while \(V_t\) grows by compounding plus new fees. Thus \(V_t / A_t\) can only increase (when fees are paid) or stay constant (during gaps), so the binding constraint in (10) is always the terminal year—the naive approach (12) suffices.</p>
+
+                <p>In <strong>Mode 2</strong>, ongoing contributions (\(I_t = 1\)) add to \(A_t\) each year, which can cause the ratio \(V_t / A_t\) to decrease during gap years or when fees drop. This is precisely when an intermediate year can become the binding constraint in (10), and the liquidity-aware calculation becomes essential.</p>
             </div>
         </div>
     </section>
