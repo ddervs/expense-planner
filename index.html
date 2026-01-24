@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Fund Planner</title>
 
-```
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -371,6 +370,14 @@
         color: #b54848;
     }
 
+    .binding-row {
+        background: #fff3e0;
+    }
+
+    .binding-row td {
+        font-weight: 600;
+    }
+
     .explanation {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -489,7 +496,6 @@
         }
     }
 </style>
-```
 
 </head>
 <body>
@@ -500,12 +506,28 @@
         </div>
     </div>
 
-```
 <div id="app">
     <header>
         <h1>School Fund Planner</h1>
         <p>Calculate required savings for school fees, accounting for inflation and investment returns.</p>
     </header>
+
+    <section id="introduction">
+        <div class="explanation">
+            <h3>What This Tool Does</h3>
+            <p>This calculator helps you determine how much you need to save each year to cover future school fees. It accounts for fee inflation, investment returns, and ensures you'll always have sufficient funds when payments are due—even with multiple children starting at different times.</p>
+
+            <h3>Input Parameters</h3>
+            <ul>
+                <li><strong>Annual Fee</strong> — The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
+                <li><strong>Years until school starts</strong> — How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
+                <li><strong>Years of schooling</strong> — The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
+                <li><strong>Fee inflation</strong> — Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3–5% per year).</li>
+                <li><strong>Investment return</strong> — Expected annual return on your savings. A balanced portfolio might return 4–6% on average over the long term.</li>
+                <li><strong>Continue contributions during school</strong> — If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
+            </ul>
+        </div>
+    </section>
 
     <section id="calculator">
         <h2>Calculator</h2>
@@ -611,133 +633,112 @@
                 </div>
                 <p>This is the <strong>present value</strong> of that future £100.</p>
 
-                <h3>The School Fee Problem</h3>
-                <p>Let's use concrete numbers:</p>
+                <h3>The Liquidity Constraint Problem</h3>
+                <p>A naive approach calculates the present value of all fees and finds a contribution that matches it. However, this only ensures you end up with £0 at the final year—<strong>it doesn't guarantee you have enough money at every point in time</strong>.</p>
+
+                <p>With multiple children starting at different times, fee payments can create "withdrawal humps" that exceed what the accumulated savings can cover, causing the account to go negative. This calculator uses a <strong>liquidity-constrained</strong> approach that ensures the account balance never goes negative.</p>
+
+                <h3>Mathematical Framework</h3>
+                <p>Let's define the key variables:</p>
                 <ul>
-                    <li>Annual fee \(A = £10{,}000\) (today's prices)</li>
-                    <li>Fee inflation \(g = 3\%\) per year</li>
-                    <li>Investment return \(r = 5\%\) per year</li>
-                    <li>School duration \(n = 7\) years</li>
-                    <li>Years until school starts \(Y = 5\) years</li>
-                    <li>One child (\(k = 1\))</li>
+                    <li>\(T\) = final year (when last child finishes school)</li>
+                    <li>\(r\) = annual investment return rate</li>
+                    <li>\(g\) = annual fee inflation rate</li>
+                    <li>\(F_t\) = total fees due in year \(t\)</li>
+                    <li>\(I_t\) = contribution indicator (1 if contributing in year \(t\), 0 otherwise)</li>
+                    <li>\(C\) = annual contribution (what we're solving for)</li>
+                    <li>\(B_t\) = account balance at end of year \(t\)</li>
                 </ul>
 
-                <h3>Step 1: What Are the Actual Fee Amounts?</h3>
-                <p>Fees grow with inflation <strong>from today</strong>. If school starts in year 5, the fees for each school year are:</p>
-                
-                <table class="example-table">
-                    <thead>
-                        <tr>
-                            <th>School Year</th>
-                            <th>Calendar Year</th>
-                            <th>Fee Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>1st</td><td>Year 5</td><td>\(A(1+g)^5 = £11{,}593\)</td></tr>
-                        <tr><td>2nd</td><td>Year 6</td><td>\(A(1+g)^6 = £11{,}941\)</td></tr>
-                        <tr><td>3rd</td><td>Year 7</td><td>\(A(1+g)^7 = £12{,}299\)</td></tr>
-                        <tr><td>...</td><td>...</td><td>...</td></tr>
-                        <tr><td>7th</td><td>Year 11</td><td>\(A(1+g)^{11} = £13{,}842\)</td></tr>
-                    </tbody>
-                </table>
+                <h3>Balance Evolution</h3>
+                <p>At the end of each year \(t\):</p>
+                <ol>
+                    <li>Previous balance \(B_{t-1}\) grows by factor \((1+r)\)</li>
+                    <li>Add contribution \(C\) if \(I_t = 1\)</li>
+                    <li>Pay fees \(F_t\)</li>
+                </ol>
 
-                <p>In general, a child starting in year \(Y\) pays a fee in their school year \(t\) (where \(t = 0, 1, 2, \ldots, n-1\)) of:</p>
+                <p>This gives the recurrence:</p>
                 <div class="formula-box">
-                    $$\text{Fee}_{Y,t} = A(1+g)^{Y+t}$$
+                    $$B_t = (1+r) \cdot B_{t-1} + I_t \cdot C - F_t$$
+                </div>
+                <p>with \(B_0 = 0\).</p>
+
+                <h3>Closed-Form Solution</h3>
+                <p>Unwinding the recurrence:</p>
+                <div class="formula-box">
+                    $$B_t = C \cdot \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s} - \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
                 </div>
 
-                <h3>Step 2: Present Value of All Fees at Today</h3>
-                <p>We want to know the total value of all fees <strong>in today's money</strong>. This is our "target" that we need to fund.</p>
+                <p>Define two key quantities:</p>
 
-                <p>For the fee paid in calendar year \(Y + t\), we discount it back to today by dividing by \((1+r)^{Y+t}\):</p>
+                <p><strong>Accumulated Contribution Factor:</strong></p>
                 <div class="formula-box">
-                    $$PV_t = \frac{A(1+g)^{Y+t}}{(1+r)^{Y+t}} = A \left(\frac{1+g}{1+r}\right)^{Y+t}$$
+                    $$A_t = \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s}$$
+                </div>
+                <p>This is the future value at year \(t\) of £1 contributed in each contributing year up to \(t\).</p>
+
+                <p><strong>Accumulated Fee Value:</strong></p>
+                <div class="formula-box">
+                    $$V_t = \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
+                </div>
+                <p>This is the future value at year \(t\) of all fees paid through year \(t\).</p>
+
+                <p>So we have:</p>
+                <div class="formula-box">
+                    $$B_t = C \cdot A_t - V_t$$
                 </div>
 
-                <p>The total present value is the sum over all school years. Let's write out the terms explicitly:</p>
+                <h3>The Liquidity Constraint</h3>
+                <p>For the account to remain solvent, we need \(B_t \geq 0\) for all \(t\). This requires:</p>
                 <div class="formula-box">
-                    $$PV_{\text{child}} = A \left(\frac{1+g}{1+r}\right)^{Y} + A \left(\frac{1+g}{1+r}\right)^{Y+1} + A \left(\frac{1+g}{1+r}\right)^{Y+2} + \cdots + A \left(\frac{1+g}{1+r}\right)^{Y+n-1}$$
+                    $$C \cdot A_t \geq V_t \quad \Rightarrow \quad C \geq \frac{V_t}{A_t}$$
+                </div>
+                <p>for all years \(t\) where \(A_t > 0\).</p>
+
+                <h3>The Solution</h3>
+                <p>The minimum contribution satisfying all liquidity constraints is:</p>
+                <div class="formula-box">
+                    $$\boxed{C_{\min} = \max_{t \in \{1, \ldots, T\}} \left( \frac{V_t}{A_t} \right)}$$
                 </div>
 
-                <p>Factoring out \(A \left(\frac{1+g}{1+r}\right)^{Y}\):</p>
-                <div class="formula-box">
-                    $$PV_{\text{child}} = A \left(\frac{1+g}{1+r}\right)^{Y} \left[ 1 + \left(\frac{1+g}{1+r}\right) + \left(\frac{1+g}{1+r}\right)^{2} + \cdots + \left(\frac{1+g}{1+r}\right)^{n-1} \right]$$
-                </div>
+                <p>The year \(t^*\) where this maximum occurs is the <strong>binding constraint year</strong>—the point where the account balance is exactly zero and under maximum stress. In the cash flow table, this year is highlighted.</p>
 
-                <p>The bracketed term is a geometric series with first term 1, common ratio \(\rho = \frac{1+g}{1+r}\), and \(n\) terms. The sum formula gives:</p>
+                <h3>Why This Matters</h3>
+                <p>A naive present-value approach would compute:</p>
                 <div class="formula-box">
-                    $$1 + \rho + \rho^2 + \cdots + \rho^{n-1} = \frac{1 - \rho^n}{1 - \rho}$$
+                    $$C_{\text{naive}} = \frac{V_T}{A_T}$$
                 </div>
-
-                <p>So the present value for one child is:</p>
+                <p>This only enforces \(B_T = 0\) at the final year. But with multiple children at different start times, an intermediate year might have:</p>
                 <div class="formula-box">
-                    $$PV_{\text{child}} = A \left(\frac{1+g}{1+r}\right)^{Y} \times \frac{1 - \left(\frac{1+g}{1+r}\right)^{n}}{1 - \frac{1+g}{1+r}}$$
+                    $$\frac{V_t}{A_t} > \frac{V_T}{A_T}$$
                 </div>
+                <p>In this case, the naive contribution would cause a negative balance at year \(t\), requiring you to borrow money—which breaks the model.</p>
 
-                <p>With our example numbers, \(\rho = \frac{1.03}{1.05} \approx 0.981\):</p>
+                <h3>Fee Schedule</h3>
+                <p>Fees grow with inflation from year 1. For a child starting in year \(Y\) with \(n\) years of schooling and base annual fee \(A\):</p>
                 <div class="formula-box">
-                    $$PV_{\text{child}} = 10{,}000 \times (0.981)^5 \times \frac{1 - (0.981)^7}{1 - 0.981} = 10{,}000 \times 0.908 \times 6.77 = £61{,}450$$
+                    $$F_t^{(\text{child})} = \begin{cases} A \cdot (1+g)^{t-1} & \text{if } Y \leq t < Y + n \\ 0 & \text{otherwise} \end{cases}$$
                 </div>
+                <p>Total fees in year \(t\) sum across all children in school that year.</p>
 
-                <p>For <strong>multiple children</strong> starting in different years, we calculate each child's present value separately and sum them:</p>
-                <div class="formula-box">
-                    $$PV_{\text{total}} = \sum_{i} PV_{\text{child } i}$$
-                </div>
+                <h3>Contribution Modes</h3>
+                <ul>
+                    <li><strong>Mode 1</strong> (stop when school starts): \(I_t = 1\) for \(t < Y_{\min}\), else 0</li>
+                    <li><strong>Mode 2</strong> (continue during school): \(I_t = 1\) for all \(t \leq T\)</li>
+                </ul>
 
-                <h3>Mode 1: Save Only Before School Starts</h3>
-                <p>You want to make equal annual contributions of \(C\) for \(Y_{\min}\) years (until the first child starts), with contributions made at the <strong>end</strong> of each year.</p>
+                <h3>Worked Example</h3>
+                <p>Consider two children:</p>
+                <ul>
+                    <li>Child 1: starts year 2, 3 years of school</li>
+                    <li>Child 2: starts year 6, 3 years of school</li>
+                    <li>Base fee: £10,000/year, inflation \(g = 3\%\)</li>
+                    <li>Investment return \(r = 5\%\)</li>
+                    <li>Mode 2: contribute through all years</li>
+                </ul>
 
-                <p>The present value of these contributions, written out term by term:</p>
-                <div class="formula-box">
-                    $$PV_{\text{contributions}} = \frac{C}{(1+r)^1} + \frac{C}{(1+r)^2} + \frac{C}{(1+r)^3} + \cdots + \frac{C}{(1+r)^{Y_{\min}}}$$
-                </div>
-
-                <p>Factoring out \(C\):</p>
-                <div class="formula-box">
-                    $$PV_{\text{contributions}} = C \left[ \frac{1}{1+r} + \frac{1}{(1+r)^2} + \cdots + \frac{1}{(1+r)^{Y_{\min}}} \right]$$
-                </div>
-
-                <p>This is a geometric series with first term \(\frac{1}{1+r}\), ratio \(\frac{1}{1+r}\), and \(Y_{\min}\) terms. Using the sum formula:</p>
-                <div class="formula-box">
-                    $$PV_{\text{contributions}} = C \times \frac{1 - (1+r)^{-Y_{\min}}}{r}$$
-                </div>
-
-                <p>The term \(\frac{1 - (1+r)^{-Y}}{r}\) is called the <strong>present value annuity factor</strong>.</p>
-
-                <p>Setting contributions equal to fees and solving for \(C\):</p>
-                <div class="formula-box">
-                    $$C \times \frac{1 - (1+r)^{-Y_{\min}}}{r} = PV_{\text{total}}$$
-                </div>
-                <div class="formula-box">
-                    $$C = PV_{\text{total}} \times \frac{r}{1 - (1+r)^{-Y_{\min}}}$$
-                </div>
-
-                <p>With our example (5 years of contributions):</p>
-                <div class="formula-box">
-                    $$\frac{1 - (1.05)^{-5}}{0.05} = \frac{1 - 0.784}{0.05} = 4.33$$
-                </div>
-                <div class="formula-box">
-                    $$C = \frac{61{,}450}{4.33} = £14{,}190 \text{ per year}$$
-                </div>
-
-                <h3>Mode 2: Continue Contributing During School</h3>
-                <p>Now you contribute from today until the last child finishes school. If the last child starts in year \(Y_{\max}\) and school lasts \(n\) years, you contribute for \(Y_{\max} + n\) years total.</p>
-
-                <p>The formula is the same, just with more years:</p>
-                <div class="formula-box">
-                    $$C = PV_{\text{total}} \times \frac{r}{1 - (1+r)^{-(Y_{\max}+n)}}$$
-                </div>
-
-                <p>With our example (5 + 7 = 12 years of contributions):</p>
-                <div class="formula-box">
-                    $$\frac{1 - (1.05)^{-12}}{0.05} = \frac{1 - 0.557}{0.05} = 8.86$$
-                </div>
-                <div class="formula-box">
-                    $$C = \frac{61{,}450}{8.86} = £6{,}935 \text{ per year}$$
-                </div>
-
-                <p>This is roughly half the Mode 1 amount, which makes sense—you're contributing for roughly twice as many years.</p>
+                <p>The algorithm computes \(V_t / A_t\) for each year and finds the maximum. If Child 1's fees create a large early withdrawal before later contributions accumulate, an intermediate year becomes the binding constraint—requiring a higher contribution than the naive formula would suggest.</p>
 
                 <h3>Key Insight</h3>
                 <p>The ratio \(\rho = \frac{1+g}{1+r}\) determines how fees grow relative to your investment returns:</p>
@@ -746,15 +747,6 @@
                     <li>If \(g > r\) (so \(\rho > 1\)): Fees outpace investments—you're fighting an uphill battle</li>
                     <li>If \(g = r\) (so \(\rho = 1\)): They balance out, and each year's fee has the same present value</li>
                 </ul>
-
-                <h3>Multiple Children at Different Times</h3>
-                <p>When children start at different years, each generates their own stream of fee payments. We calculate each child's present value separately and sum them. For example:</p>
-                <ul>
-                    <li>Child A starts in year 5: \(PV_A = £61{,}450\)</li>
-                    <li>Child B starts in year 8: \(PV_B = £56{,}730\)</li>
-                    <li>Total: \(PV_{\text{total}} = £118{,}180\)</li>
-                </ul>
-                <p>Note that Child B's fees have lower present value because they're further in the future (more discounting).</p>
             </div>
         </div>
     </section>
@@ -773,62 +765,150 @@
         return false;
     }
 
-    function feePresentValueOneChild(A, g, r, n, startYear) {
+    /**
+     * Build the fee schedule: F_t = total fees due in year t
+     * Fees grow with inflation from year 0 (today).
+     * Fee in year t = A * (1+g)^(t-1) for the first year of inflation indexing from year 1.
+     */
+    function buildFeeSchedule(A, g, n, startYears, totalYears) {
+        const fees = new Array(totalYears + 1).fill(0); // fees[t] for t = 1 to totalYears
+
+        startYears.forEach(startYear => {
+            for (let schoolYear = 0; schoolYear < n; schoolYear++) {
+                const calendarYear = startYear + schoolYear;
+                if (calendarYear >= 1 && calendarYear <= totalYears) {
+                    // Fee grows with inflation from year 1
+                    const fee = A * Math.pow(1 + g, calendarYear - 1);
+                    fees[calendarYear] += fee;
+                }
+            }
+        });
+
+        return fees;
+    }
+
+    /**
+     * Build contribution indicator: I_t = 1 if contributing in year t, 0 otherwise
+     * Mode 1 (continueDuring=false): contribute in years 1 to firstStart - 1
+     * Mode 2 (continueDuring=true): contribute in years 1 to totalYears
+     */
+    function buildContributionIndicator(continueDuring, firstStart, totalYears) {
+        const indicator = new Array(totalYears + 1).fill(0);
+        const lastContribYear = continueDuring ? totalYears : firstStart - 1;
+
+        for (let t = 1; t <= lastContribYear; t++) {
+            indicator[t] = 1;
+        }
+
+        return indicator;
+    }
+
+    /**
+     * Calculate the minimum contribution using liquidity constraints.
+     *
+     * Balance evolution: B_t = (1+r) * B_{t-1} + I_t * C - F_t
+     *
+     * Closed form: B_t = C * A_t - V_t
+     * where:
+     *   A_t = sum_{s=1}^{t} I_s * (1+r)^{t-s}  (accumulated contribution factor)
+     *   V_t = sum_{s=1}^{t} F_s * (1+r)^{t-s}  (accumulated fee value)
+     *
+     * For B_t >= 0: C >= V_t / A_t
+     *
+     * C_min = max over all t of (V_t / A_t)
+     */
+    function calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring) {
+        const firstStart = Math.min(...startYears);
+        const lastFeeYear = Math.max(...startYears) + n - 1;  // Last year of school
+        const totalYears = lastFeeYear;
+
+        const fees = buildFeeSchedule(A, g, n, startYears, totalYears);
+        const indicator = buildContributionIndicator(continueDuring, firstStart, totalYears);
+
+        let A_t = 0;  // Accumulated contribution factor
+        let V_t = 0;  // Accumulated fee value
+        let C_min = 0;
+        let bindingYear = 1;
+
+        for (let t = 1; t <= totalYears; t++) {
+            // Update accumulated values: compound previous values and add current
+            A_t = (1 + r) * A_t + indicator[t];
+            V_t = (1 + r) * V_t + fees[t];
+
+            // Calculate required contribution for this year's constraint
+            if (A_t > 1e-10) {
+                const ratio = V_t / A_t;
+                if (ratio > C_min) {
+                    C_min = ratio;
+                    bindingYear = t;
+                }
+            }
+        }
+
+        // Also compute total PV for display purposes (using the standard formula)
+        const pvTotal = computeTotalPV(A, g, r, n, startYears);
+
+        // Count contribution years
+        const contributionYears = continueDuring ? totalYears : Math.max(0, firstStart - 1);
+
+        return {
+            contribution: C_min,
+            bindingYear,
+            pvTotal,
+            contributionYears,
+            totalYears,
+            fees,
+            indicator
+        };
+    }
+
+    /**
+     * Compute total present value of fees (for display purposes)
+     */
+    function computeTotalPV(A, g, r, n, startYears) {
         const ratio = (1 + g) / (1 + r);
-        
+
         let feeFactor;
         if (Math.abs(ratio - 1) < 1e-10) {
             feeFactor = n;
         } else {
             feeFactor = (1 - Math.pow(ratio, n)) / (1 - ratio);
         }
-        
-        const inflationDiscountFactor = Math.pow(ratio, startYear);
-        return A * inflationDiscountFactor * feeFactor;
+
+        return startYears.reduce((sum, startYear) => {
+            const inflationDiscountFactor = Math.pow(ratio, startYear);
+            return sum + A * inflationDiscountFactor * feeFactor;
+        }, 0);
     }
 
-    function totalFeePresentValue(A, g, r, n, startYears) {
-        return startYears.reduce((sum, y) => sum + feePresentValueOneChild(A, g, r, n, y), 0);
-    }
+    /**
+     * Generate cash flows with correct timing:
+     * At end of year t:
+     *   1. Previous balance grows by (1+r)
+     *   2. Add contribution if applicable
+     *   3. Pay fees
+     */
+    function generateCashFlows(A, g, r, n, startYears, contribution, continueDuring) {
+        const firstStart = Math.min(...startYears);
+        const lastFeeYear = Math.max(...startYears) + n - 1;  // Last year of school
+        const totalYears = lastFeeYear;
 
-    function annualContributionBeforeOnly(pvTotal, r, years) {
-        if (years <= 0) return Infinity;
-        if (Math.abs(r) < 1e-10) return pvTotal / years;
-        const pvAnnuityFactor = (1 - Math.pow(1 + r, -years)) / r;
-        return pvTotal / pvAnnuityFactor;
-    }
+        const fees = buildFeeSchedule(A, g, n, startYears, totalYears);
+        const indicator = buildContributionIndicator(continueDuring, firstStart, totalYears);
 
-    function annualContributionContinued(pvTotal, r, totalYears) {
-        if (totalYears <= 0) return Infinity;
-        if (Math.abs(r) < 1e-10) return pvTotal / totalYears;
-        const pvAnnuityFactor = (1 - Math.pow(1 + r, -totalYears)) / r;
-        return pvTotal / pvAnnuityFactor;
-    }
-
-    function generateCashFlows(A, g, r, n, startYears, contribution, totalYears) {
         const cashFlows = [];
         let balance = 0;
-        
-        const feesByYear = {};
-        startYears.forEach(startYear => {
-            for (let t = 0; t < n; t++) {
-                const year = startYear + t;
-                const fee = A * Math.pow(1 + g, year);
-                feesByYear[year] = (feesByYear[year] || 0) + fee;
-            }
-        });
 
         for (let year = 1; year <= totalYears; year++) {
-            const feePayment = feesByYear[year] || 0;
-            
-            balance -= feePayment;
             const investmentReturn = balance * r;
-            balance += investmentReturn;
-            balance += contribution;
+            const yearContribution = indicator[year] * contribution;
+            const feePayment = fees[year];
+
+            balance = balance * (1 + r) + yearContribution - feePayment;
 
             cashFlows.push({
                 year,
-                contribution,
+                contribution: yearContribution,
                 feePayment,
                 investmentReturn,
                 endBalance: balance
@@ -870,78 +950,75 @@
         }
 
         const firstStart = Math.min(...startYears);
-        const lastFinish = Math.max(...startYears) + n;
+        const lastFeeYear = Math.max(...startYears) + n - 1;
 
-        return { A, startYears, n, g, r, continueDuring, firstStart, lastFinish };
+        return { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear };
     }
 
     function calculate() {
         try {
-            const { A, startYears, n, g, r, continueDuring, firstStart, lastFinish } = getInputs();
+            const { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear } = getInputs();
 
-            const pvTotal = totalFeePresentValue(A, g, r, n, startYears);
-            
-            let contribution, contributionYears;
-            if (continueDuring) {
-                contribution = annualContributionContinued(pvTotal, r, lastFinish);
-                contributionYears = lastFinish;
-            } else {
-                contribution = annualContributionBeforeOnly(pvTotal, r, firstStart);
-                contributionYears = firstStart;
-            }
+            const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring);
+            const { contribution, bindingYear, pvTotal, contributionYears } = result;
 
             document.getElementById('results').style.display = 'block';
             document.getElementById('resultAmount').textContent = formatCurrency(contribution) + '/year';
-            
-            const childText = startYears.length === 1 
+
+            const childText = startYears.length === 1
                 ? `1 child starting year ${startYears[0]}`
                 : `${startYears.length} children starting years ${startYears.join(', ')}`;
-            
+
             document.getElementById('resultDetails').innerHTML = `
-                ${childText} · ${n} years of schooling · 
+                ${childText} · ${n} years of schooling ·
                 Contributing for ${contributionYears} years<br>
-                Total fees present value: ${formatCurrency(pvTotal)}
+                Total fees present value: ${formatCurrency(pvTotal)}<br>
+                <strong>Binding constraint: Year ${bindingYear}</strong> (account reaches zero)
             `;
 
-            updateChart(A, startYears, n, continueDuring, firstStart, lastFinish);
+            updateChart(A, startYears, n, continueDuring, g, r);
 
-            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, lastFinish);
-            updateCashFlowTable(cashFlows);
+            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring);
+            updateCashFlowTable(cashFlows, bindingYear);
 
         } catch (e) {
             alert(e.message);
         }
     }
 
-    function updateChart(A, startYears, n, continueDuring, firstStart, lastFinish) {
-        const inflationRates = [0, 0.02, 0.03, 0.04, 0.05, 0.06];
-        const returnRates = [0.03, 0.04, 0.05, 0.06, 0.07, 0.08];
+    function updateChart(A, startYears, n, continueDuring, inputInflation, inputReturn) {
+        // Center the sensitivity analysis around user's input values
+        const inflationOffsets = [-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03];
+        const returnOffsets = [-0.02, -0.01, 0, 0.01, 0.02];
+
+        const inflationRates = inflationOffsets
+            .map(offset => Math.max(0, inputInflation + offset));  // Don't go below 0%
+        const returnRates = returnOffsets
+            .map(offset => Math.max(0.01, inputReturn + offset));  // Don't go below 1%
+
         const colors = [
-            'rgb(45, 90, 74)',
-            'rgb(70, 130, 110)',
-            'rgb(100, 160, 140)',
             'rgb(180, 100, 80)',
-            'rgb(200, 130, 100)',
-            'rgb(220, 160, 130)'
+            'rgb(200, 140, 110)',
+            'rgb(45, 90, 74)',      // Input value (center) in accent color
+            'rgb(70, 130, 110)',
+            'rgb(100, 160, 140)'
         ];
 
-        const datasets = returnRates.map((r, idx) => {
-            const contributions = inflationRates.map(g => {
-                const pvTotal = totalFeePresentValue(A, g, r, n, startYears);
-                if (continueDuring) {
-                    return annualContributionContinued(pvTotal, r, lastFinish);
-                } else {
-                    return annualContributionBeforeOnly(pvTotal, r, firstStart);
-                }
+        const datasets = returnRates.map((retRate, idx) => {
+            const contributions = inflationRates.map(infRate => {
+                const result = calculateLiquidityConstrained(A, infRate, retRate, n, startYears, continueDuring);
+                return result.contribution;
             });
 
+            const isInputReturn = Math.abs(retRate - inputReturn) < 0.001;
             return {
-                label: `${(r * 100).toFixed(0)}% return`,
+                label: `${(retRate * 100).toFixed(0)}% return${isInputReturn ? ' (selected)' : ''}`,
                 data: contributions,
                 borderColor: colors[idx],
                 backgroundColor: colors[idx],
                 tension: 0.3,
-                pointRadius: 4
+                pointRadius: isInputReturn ? 6 : 4,
+                borderWidth: isInputReturn ? 3 : 2
             };
         });
 
@@ -954,7 +1031,10 @@
         chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: inflationRates.map(g => `${(g * 100).toFixed(0)}%`),
+                labels: inflationRates.map(infRate => {
+                    const isInput = Math.abs(infRate - inputInflation) < 0.001;
+                    return isInput ? `${(infRate * 100).toFixed(0)}%*` : `${(infRate * 100).toFixed(0)}%`;
+                }),
                 datasets
             },
             options: {
@@ -1004,40 +1084,42 @@
         });
     }
 
-    function updateCashFlowTable(cashFlows) {
+    function updateCashFlowTable(cashFlows, bindingYear) {
         const tbody = document.getElementById('cashflowBody');
-        tbody.innerHTML = cashFlows.map(cf => `
-            <tr>
-                <td>${cf.year}</td>
-                <td class="positive">+${formatCurrency(cf.contribution)}</td>
-                <td class="${cf.feePayment > 0 ? 'negative' : ''}">${cf.feePayment > 0 ? '-' + formatCurrency(cf.feePayment) : '—'}</td>
-                <td class="${cf.investmentReturn >= 0 ? 'positive' : 'negative'}">${cf.investmentReturn >= 0 ? '+' : ''}${formatCurrency(cf.investmentReturn)}</td>
-                <td>${formatCurrency(cf.endBalance)}</td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = cashFlows.map(cf => {
+            const isBinding = cf.year === bindingYear;
+            const rowClass = isBinding ? 'binding-row' : '';
+            const contribClass = cf.contribution > 0 ? 'positive' : '';
+            const contribText = cf.contribution > 0 ? '+' + formatCurrency(cf.contribution) : '—';
+
+            return `
+                <tr class="${rowClass}">
+                    <td>${cf.year}${isBinding ? ' *' : ''}</td>
+                    <td class="${contribClass}">${contribText}</td>
+                    <td class="${cf.feePayment > 0 ? 'negative' : ''}">${cf.feePayment > 0 ? '-' + formatCurrency(cf.feePayment) : '—'}</td>
+                    <td class="${cf.investmentReturn >= 0 ? 'positive' : 'negative'}">${cf.investmentReturn >= 0 ? '+' : ''}${formatCurrency(cf.investmentReturn)}</td>
+                    <td>${formatCurrency(Math.round(cf.endBalance))}</td>
+                </tr>
+            `;
+        }).join('');
     }
 
     function downloadCSV() {
         try {
-            const { A, startYears, n, g, r, continueDuring, firstStart, lastFinish } = getInputs();
-            const pvTotal = totalFeePresentValue(A, g, r, n, startYears);
-            
-            let contribution;
-            if (continueDuring) {
-                contribution = annualContributionContinued(pvTotal, r, lastFinish);
-            } else {
-                contribution = annualContributionBeforeOnly(pvTotal, r, firstStart);
-            }
+            const { A, startYears, n, g, r, continueDuring } = getInputs();
+            const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring);
+            const { contribution, bindingYear, pvTotal } = result;
 
-            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, lastFinish);
+            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring);
 
-            const headers = ['Year', 'Contribution', 'Fee Payment', 'Investment Return', 'End Balance'];
+            const headers = ['Year', 'Contribution', 'Fee Payment', 'Investment Return', 'End Balance', 'Binding Year'];
             const rows = cashFlows.map(cf => [
                 cf.year,
                 cf.contribution.toFixed(2),
                 cf.feePayment.toFixed(2),
                 cf.investmentReturn.toFixed(2),
-                cf.endBalance.toFixed(2)
+                cf.endBalance.toFixed(2),
+                cf.year === bindingYear ? 'Yes' : ''
             ]);
 
             const summary = [
@@ -1054,12 +1136,13 @@
                 ['Results:'],
                 ['Required annual contribution', contribution.toFixed(2)],
                 ['Total fees present value', pvTotal.toFixed(2)],
+                ['Binding constraint year', bindingYear],
                 [''],
                 headers,
                 ...rows
             ];
 
-            const csvContent = summary.map(row => 
+            const csvContent = summary.map(row =>
                 Array.isArray(row) ? row.join(',') : row
             ).join('\n');
 
@@ -1101,7 +1184,6 @@
         }
     });
 </script>
-```
 
 </body>
 </html>
