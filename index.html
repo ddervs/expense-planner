@@ -566,23 +566,23 @@
         <div class="collapsible-content open">
             <div class="explanation">
                 <h3>What This Tool Does</h3>
-                <p>This calculator determines how much you need to save each year to cover future school fees. It accounts for fee inflation, investment returns, and ensures you'll always have sufficient funds when payments are due—even with multiple children starting at different times.</p>
+                <p>This calculator determines how much you need to save each year to cover future school fees. It accounts for fee inflation, investment returns, and ensures you'll always have sufficient funds when payments are due, even with multiple children starting at different times.</p>
 
                 <h3>Input Parameters</h3>
                 <ul>
-                    <li><strong>Annual Fee</strong> — The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
-                    <li><strong>Years until school starts</strong> — How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
-                    <li><strong>Years of schooling</strong> — The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
-                    <li><strong>Fee inflation</strong> — Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3–5% per year).</li>
-                    <li><strong>Investment return</strong> — Expected annual return on your savings. A balanced portfolio might return 4–6% on average over the long term.</li>
-                    <li><strong>Continue contributions during school</strong> — If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
+                    <li><strong>Annual Fee</strong>: The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
+                    <li><strong>Years until school starts</strong>: How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
+                    <li><strong>Years of schooling</strong>: The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
+                    <li><strong>Fee inflation</strong>: Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3-5% per year).</li>
+                    <li><strong>Investment return</strong>: Expected annual return on your savings. A balanced portfolio might return 4-6% on average over the long term.</li>
+                    <li><strong>Continue contributions during school</strong>: If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
                 </ul>
 
                 <h3>Sensitivity Analysis</h3>
-                <p>The chart below shows how the required annual contribution changes across different combinations of fee inflation and investment return rates. The x-axis varies inflation around your input value, while each coloured line represents a different return rate. This helps you understand how sensitive your savings plan is to these uncertain assumptions—if returns are lower or inflation higher than expected, you'll need to save more.</p>
+                <p>The chart below shows how the required annual contribution changes across different combinations of fee inflation and investment return rates. The x-axis varies inflation around your input value, while each coloured line represents a different return rate. This helps you understand how sensitive your savings plan is to these uncertain assumptions: if returns are lower or inflation higher than expected, you'll need to save more.</p>
 
                 <h3>Cash Flow Schedule</h3>
-                <p>The table provides a year-by-year breakdown showing your annual contribution, fee payments, investment returns, and running account balance. The row marked with an asterisk (*) is the <strong>binding constraint year</strong>—the point where your account balance is tightest (reaches zero). This is the year that determines your minimum required contribution.</p>
+                <p>The table provides a year-by-year breakdown showing your annual contribution, fee payments, investment returns, and running account balance. The row marked with an asterisk (*) is the <strong>binding constraint year</strong>, the point where your account balance is tightest (reaches zero). This is the year that determines your minimum required contribution.</p>
 
                 <h3>Mathematical Explanation</h3>
                 <p>The collapsible section at the bottom provides a rigorous derivation of the calculation methodology, including the balance evolution equations, geometric series simplifications, and the liquidity constraint that ensures your account never goes negative.</p>
@@ -628,7 +628,7 @@
         <div class="collapsible-content">
             <div class="explanation">
                 <h3>1. Time Value of Money</h3>
-                <p>Money has <strong>time value</strong>: £1 today is worth more than £1 tomorrow because you can invest it and earn a return. This means we cannot directly add or compare amounts at different points in time—we must first move them to a common reference point.</p>
+                <p>Money has <strong>time value</strong>: £1 today is worth more than £1 tomorrow because you can invest it and earn a return. This means we cannot directly add or compare amounts at different points in time; we must first move them to a common reference point.</p>
 
                 <p><strong>Compounding</strong> (moving forward in time): If you invest £\(P\) today at annual return \(r\), after one year you have:</p>
                 <div class="formula-box">
@@ -846,7 +846,7 @@
                     $$\frac{V_t}{A_t} > \frac{V_T}{A_T}$$
                 </div>
 
-                <p>In this case, using \(C_{\text{naive}}\) in equation (5) gives \(B_t = C_{\text{naive}} \cdot A_t - V_t < 0\)—the account goes negative, requiring borrowing.</p>
+                <p>In this case, using \(C_{\text{naive}}\) in equation (5) gives \(B_t = C_{\text{naive}} \cdot A_t - V_t < 0\), so the account goes negative, requiring borrowing.</p>
 
                 <p><strong>When does this happen?</strong> From equations (3) and (4), the ratio \(V_t / A_t\) increases when fees are paid (adding to \(V_t\)) and decreases when contributions are made without corresponding fees (adding to \(A_t\)). An intermediate year becomes binding when:</p>
                 <ul>
@@ -901,19 +901,19 @@
                     </tbody>
                 </table>
 
-                <p>Applying equation (10), the maximum ratio occurs at <strong>year 4</strong> (value £21,943), not year 8. This is the binding constraint year \(t^* = 4\). Using the naive approach (12) would give \(C_{\text{naive}} = 15{,}340\), but substituting into (5) gives \(B_4 = 15{,}340 \times 4.310 - 94{,}575 = -28{,}470 < 0\)—the account goes negative.</p>
+                <p>Applying equation (10), the maximum ratio occurs at <strong>year 4</strong> (value £21,943), not year 8. This is the binding constraint year \(t^* = 4\). Using the naive approach (12) would give \(C_{\text{naive}} = 15{,}340\), but substituting into (5) gives \(B_4 = 15{,}340 \times 4.310 - 94{,}575 = -28{,}470 < 0\), so the account goes negative.</p>
 
                 <p>The correct minimum contribution from (10) is \(C_{\min} = £21{,}943\) per year, ensuring \(B_t \geq 0\) for all \(t\) as required by (8).</p>
 
                 <h3>12. Key Insights</h3>
                 <p>The ratio \(\rho = \frac{1+g}{1+r}\) (appearing in the fee calculations) determines the relationship between fee growth and investment returns:</p>
                 <ul>
-                    <li>If \(g < r\) (so \(\rho < 1\)): Investment returns outpace fee inflation—the burden lightens over time</li>
-                    <li>If \(g > r\) (so \(\rho > 1\)): Fees grow faster than investments—an uphill battle</li>
+                    <li>If \(g < r\) (so \(\rho < 1\)): Investment returns outpace fee inflation, so the burden lightens over time</li>
+                    <li>If \(g > r\) (so \(\rho > 1\)): Fees grow faster than investments, an uphill battle</li>
                     <li>If \(g = r\) (so \(\rho = 1\)): They balance out; each year's fee has the same present value</li>
                 </ul>
 
-                <p>In <strong>Mode 1</strong>, once contributions stop (\(I_t = 0\)), examining equations (3) and (4) shows that \(A_t\) only grows by compounding while \(V_t\) grows by compounding plus new fees. Thus \(V_t / A_t\) can only increase (when fees are paid) or stay constant (during gaps), so the binding constraint in (10) is always the terminal year—the naive approach (12) suffices.</p>
+                <p>In <strong>Mode 1</strong>, once contributions stop (\(I_t = 0\)), examining equations (3) and (4) shows that \(A_t\) only grows by compounding while \(V_t\) grows by compounding plus new fees. Thus \(V_t / A_t\) can only increase (when fees are paid) or stay constant (during gaps), so the binding constraint in (10) is always the terminal year. The naive approach (12) suffices.</p>
 
                 <p>In <strong>Mode 2</strong>, ongoing contributions (\(I_t = 1\)) add to \(A_t\) each year, which can cause the ratio \(V_t / A_t\) to decrease during gap years or when fees drop. This is precisely when an intermediate year can become the binding constraint in (10), and the liquidity-aware calculation becomes essential.</p>
             </div>
