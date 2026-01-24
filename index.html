@@ -512,23 +512,6 @@
         <p>Calculate required savings for school fees, accounting for inflation and investment returns.</p>
     </header>
 
-    <section id="introduction">
-        <div class="explanation">
-            <h3>What This Tool Does</h3>
-            <p>This calculator helps you determine how much you need to save each year to cover future school fees. It accounts for fee inflation, investment returns, and ensures you'll always have sufficient funds when payments are due—even with multiple children starting at different times.</p>
-
-            <h3>Input Parameters</h3>
-            <ul>
-                <li><strong>Annual Fee</strong> — The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
-                <li><strong>Years until school starts</strong> — How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
-                <li><strong>Years of schooling</strong> — The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
-                <li><strong>Fee inflation</strong> — Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3–5% per year).</li>
-                <li><strong>Investment return</strong> — Expected annual return on your savings. A balanced portfolio might return 4–6% on average over the long term.</li>
-                <li><strong>Continue contributions during school</strong> — If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
-            </ul>
-        </div>
-    </section>
-
     <section id="calculator">
         <h2>Calculator</h2>
         <div class="calculator-card">
@@ -574,6 +557,35 @@
                 <h3>Required Annual Contribution</h3>
                 <div class="amount" id="resultAmount">—</div>
                 <div class="details" id="resultDetails"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="guide">
+        <h2 class="collapsible-trigger open" onclick="toggleCollapsible(this)">Guide</h2>
+        <div class="collapsible-content open">
+            <div class="explanation">
+                <h3>What This Tool Does</h3>
+                <p>This calculator determines how much you need to save each year to cover future school fees. It accounts for fee inflation, investment returns, and ensures you'll always have sufficient funds when payments are due—even with multiple children starting at different times.</p>
+
+                <h3>Input Parameters</h3>
+                <ul>
+                    <li><strong>Annual Fee</strong> — The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
+                    <li><strong>Years until school starts</strong> — How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
+                    <li><strong>Years of schooling</strong> — The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
+                    <li><strong>Fee inflation</strong> — Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3–5% per year).</li>
+                    <li><strong>Investment return</strong> — Expected annual return on your savings. A balanced portfolio might return 4–6% on average over the long term.</li>
+                    <li><strong>Continue contributions during school</strong> — If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
+                </ul>
+
+                <h3>Sensitivity Analysis</h3>
+                <p>The chart below shows how the required annual contribution changes across different combinations of fee inflation and investment return rates. The x-axis varies inflation around your input value, while each coloured line represents a different return rate. This helps you understand how sensitive your savings plan is to these uncertain assumptions—if returns are lower or inflation higher than expected, you'll need to save more.</p>
+
+                <h3>Cash Flow Schedule</h3>
+                <p>The table provides a year-by-year breakdown showing your annual contribution, fee payments, investment returns, and running account balance. The row marked with an asterisk (*) is the <strong>binding constraint year</strong>—the point where your account balance is tightest (reaches zero). This is the year that determines your minimum required contribution.</p>
+
+                <h3>Mathematical Explanation</h3>
+                <p>The collapsible section at the bottom provides a rigorous derivation of the calculation methodology, including the balance evolution equations, geometric series simplifications, and the liquidity constraint that ensures your account never goes negative.</p>
             </div>
         </div>
     </section>
