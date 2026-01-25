@@ -531,6 +531,11 @@
                     <input type="number" id="schoolYears" value="7" min="1" max="20">
                 </div>
                 <div class="input-group">
+                    <label for="startingBudget">Starting budget (£)</label>
+                    <input type="text" id="startingBudget" value="0" inputmode="numeric">
+                    <span class="hint">Funds already saved</span>
+                </div>
+                <div class="input-group">
                     <label for="delayYears">Saving starts in (years)</label>
                     <input type="number" id="delayYears" value="0" min="0" max="20">
                     <span class="hint">0 = start now</span>
@@ -578,7 +583,8 @@
                     <li><strong>Annual Fee</strong>: The current annual school fee in today's prices. This will be adjusted for inflation in future years.</li>
                     <li><strong>Years until school starts</strong>: How many years from now until each child begins school. Enter multiple values separated by commas for multiple children (e.g., "5, 8" for two children starting in 5 and 8 years).</li>
                     <li><strong>Years of schooling</strong>: The total duration of schooling per child (e.g., 7 years for secondary school, 13 for full private education).</li>
-                    <li><strong>Saving starts in (years)</strong>: How many years from now before you begin saving. Use 0 to start immediately. This shifts the timeline so that "Year 1" in the calculations is when saving begins, with fees already inflated accordingly.</li>
+                    <li><strong>Starting budget</strong>: Any funds you have already saved for school fees. This amount will compound at the investment return rate, reducing the contributions required.</li>
+                    <li><strong>Saving starts in (years)</strong>: How many years from now before you begin saving. Use 0 to start immediately. This shifts the timeline so that "Year 1" in the calculations is when saving begins, with fees already inflated and starting budget already compounded accordingly.</li>
                     <li><strong>Fee inflation</strong>: Expected annual increase in school fees. Historically, school fees have risen faster than general inflation (typically 3-5% per year).</li>
                     <li><strong>Investment return</strong>: Expected annual return on your savings. A balanced portfolio might return 4-6% on average over the long term.</li>
                     <li><strong>Continue contributions during school</strong>: If enabled, you continue making annual contributions while children are in school. If disabled, you only save before the first child starts, then draw down the fund.</li>
@@ -651,12 +657,13 @@
                 </div>
 
                 <h3>2. Problem Setup and Notation</h3>
-                <p>We have \(K\) children, where child \(k\) starts school in year \(Y_k\) (measured from today). Each child attends for \(n\) years. We also allow for a <strong>delay</strong> \(D \geq 0\) before saving begins. The core parameters are:</p>
+                <p>We have \(K\) children, where child \(k\) starts school in year \(Y_k\) (measured from today). Each child attends for \(n\) years. We also allow for a <strong>delay</strong> \(D \geq 0\) before saving begins, and an initial <strong>starting budget</strong> \(S \geq 0\). The core parameters are:</p>
                 <ul>
                     <li>\(A\) = base annual fee (today's prices)</li>
                     <li>\(g\) = annual fee inflation rate</li>
                     <li>\(r\) = annual investment return rate</li>
                     <li>\(n\) = years of schooling per child</li>
+                    <li>\(S\) = starting budget (funds already saved)</li>
                     <li>\(D\) = years before saving starts (0 = start now)</li>
                     <li>\(Y_k\) = year when child \(k\) starts school, measured from today</li>
                 </ul>
@@ -668,8 +675,11 @@
                 <div class="formula-box">
                     $$Y'_k = Y_k - D \quad \text{(school is } D \text{ years closer from when saving starts)}$$
                 </div>
+                <div class="formula-box">
+                    $$S' = S \cdot (1+r)^D \quad \text{(starting budget has compounded by } D \text{ years)}$$
+                </div>
 
-                <p>All subsequent formulas use these transformed values \(A'\) and \(Y'_k\). For simplicity, we drop the primes and write \(A\) and \(Y_k\) with the understanding that they represent the values at the time saving begins. We then define:</p>
+                <p>All subsequent formulas use these transformed values \(A'\), \(Y'_k\), and \(S'\). For simplicity, we drop the primes and write \(A\), \(Y_k\), and \(S\) with the understanding that they represent the values at the time saving begins. We then define:</p>
                 <ul>
                     <li>\(Y_{\min} = \min_k Y_k\) = years until first child starts (from when saving begins)</li>
                     <li>\(Y_{\max} = \max_k Y_k\) = years until last child starts</li>
@@ -733,92 +743,92 @@
 
                 <p>This gives the <strong>recurrence relation</strong>:</p>
                 <div class="formula-box">
-                    $$B_t = (1+r) \cdot B_{t-1} + I_t \cdot C - F_t, \quad \text{with } B_0 = 0 \tag{2}$$
+                    $$B_t = (1+r) \cdot B_{t-1} + I_t \cdot C - F_t, \quad \text{with } B_0 = S \tag{2}$$
                 </div>
 
                 <h3>6. Deriving the Closed-Form Solution</h3>
-                <p>We solve the recurrence by expanding it step by step:</p>
+                <p>We solve the recurrence by expanding it step by step. With starting budget \(S\):</p>
                 <div class="formula-box">
                     $$\begin{aligned}
-                    B_1 &= (1+r) \cdot 0 + I_1 C - F_1 = I_1 C - F_1 \\[8pt]
+                    B_1 &= (1+r) \cdot S + I_1 C - F_1 \\[8pt]
                     B_2 &= (1+r) B_1 + I_2 C - F_2 \\
-                        &= (1+r)(I_1 C - F_1) + I_2 C - F_2 \\
-                        &= I_1 C (1+r) + I_2 C - F_1(1+r) - F_2 \\[8pt]
+                        &= S(1+r)^2 + I_1 C (1+r) + I_2 C - F_1(1+r) - F_2 \\[8pt]
                     B_3 &= (1+r) B_2 + I_3 C - F_3 \\
-                        &= I_1 C (1+r)^2 + I_2 C (1+r) + I_3 C - F_1(1+r)^2 - F_2(1+r) - F_3
+                        &= S(1+r)^3 + I_1 C (1+r)^2 + I_2 C (1+r) + I_3 C - F_1(1+r)^2 - F_2(1+r) - F_3
                     \end{aligned}$$
                 </div>
 
                 <p>The pattern becomes clear. At year \(t\):</p>
                 <div class="formula-box">
-                    $$B_t = \sum_{s=1}^{t} I_s \cdot C \cdot (1+r)^{t-s} - \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
+                    $$B_t = S \cdot (1+r)^t + \sum_{s=1}^{t} I_s \cdot C \cdot (1+r)^{t-s} - \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}$$
                 </div>
 
-                <p>Factoring out \(C\):</p>
+                <p>We define the <strong>compounded starting budget</strong>:</p>
                 <div class="formula-box">
-                    $$B_t = C \cdot \underbrace{\sum_{s=1}^{t} I_s \cdot (1+r)^{t-s}}_{A_t} - \underbrace{\sum_{s=1}^{t} F_s \cdot (1+r)^{t-s}}_{V_t}$$
+                    $$S_t = S \cdot (1+r)^t \tag{3}$$
                 </div>
+                <p>This is the value at year \(t\) of the initial savings, growing at the investment return rate.</p>
 
-                <p>We define the <strong>accumulated contribution factor</strong>:</p>
+                <p>The <strong>accumulated contribution factor</strong>:</p>
                 <div class="formula-box">
-                    $$A_t = \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s} \tag{3}$$
+                    $$A_t = \sum_{s=1}^{t} I_s \cdot (1+r)^{t-s} \tag{4}$$
                 </div>
                 <p>This is the future value at year \(t\) of £1 contributed in each contributing year.</p>
 
                 <p>And the <strong>accumulated fee value</strong>:</p>
                 <div class="formula-box">
-                    $$V_t = \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s} \tag{4}$$
+                    $$V_t = \sum_{s=1}^{t} F_s \cdot (1+r)^{t-s} \tag{5}$$
                 </div>
                 <p>This is the future value at year \(t\) of all fees paid through year \(t\).</p>
 
-                <p>Substituting (3) and (4) into our expanded recurrence gives the <strong>closed-form balance equation</strong>:</p>
+                <p>Substituting into our expanded recurrence gives the <strong>closed-form balance equation</strong>:</p>
                 <div class="formula-box">
-                    $$B_t = C \cdot A_t - V_t \tag{5}$$
+                    $$B_t = S_t + C \cdot A_t - V_t \tag{6}$$
                 </div>
 
-                <p>In practice, \(A_t\) and \(V_t\) are computed iteratively using recurrence relations derived from (3) and (4):</p>
+                <p>In practice, \(S_t\), \(A_t\), and \(V_t\) are computed iteratively using recurrence relations:</p>
                 <div class="formula-box">
-                    $$A_t = (1+r) \cdot A_{t-1} + I_t, \quad A_0 = 0 \tag{6}$$
+                    $$S_t = (1+r) \cdot S_{t-1}, \quad S_0 = S \tag{7}$$
                 </div>
                 <div class="formula-box">
-                    $$V_t = (1+r) \cdot V_{t-1} + F_t, \quad V_0 = 0 \tag{7}$$
+                    $$A_t = (1+r) \cdot A_{t-1} + I_t, \quad A_0 = 0 \tag{8}$$
+                </div>
+                <div class="formula-box">
+                    $$V_t = (1+r) \cdot V_{t-1} + F_t, \quad V_0 = 0 \tag{9}$$
                 </div>
 
                 <h3>7. The Liquidity Constraint</h3>
                 <p>The fundamental requirement is that the account balance must never go negative:</p>
                 <div class="formula-box">
-                    $$B_t \geq 0 \quad \text{for all } t \in \{1, 2, \ldots, T\} \tag{8}$$
+                    $$B_t \geq 0 \quad \text{for all } t \in \{1, 2, \ldots, T\} \tag{10}$$
                 </div>
 
-                <p>Substituting the closed-form balance (5) into constraint (8):</p>
+                <p>Substituting the closed-form balance (6) into constraint (10):</p>
                 <div class="formula-box">
-                    $$C \cdot A_t - V_t \geq 0 \quad \Rightarrow \quad C \geq \frac{V_t}{A_t} \tag{9}$$
+                    $$S_t + C \cdot A_t - V_t \geq 0 \quad \Rightarrow \quad C \geq \frac{V_t - S_t}{A_t} \tag{11}$$
                 </div>
 
-                <p>Constraint (9) must hold for every year \(t\) where \(A_t > 0\). Therefore, the minimum contribution that satisfies all constraints is:</p>
+                <p>The starting budget \(S_t\) effectively reduces the fee burden. Constraint (11) must hold for every year \(t\) where \(A_t > 0\). Therefore, the minimum contribution is:</p>
                 <div class="formula-box">
-                    $$C_{\min} = \max_{t \in \{1, \ldots, T\}} \frac{V_t}{A_t} \tag{10}$$
+                    $$C_{\min} = \max\left(0, \max_{t \in \{1, \ldots, T\}} \frac{V_t - S_t}{A_t}\right) \tag{12}$$
                 </div>
 
-                <p>The year \(t^*\) where this maximum is achieved is the <strong>binding constraint year</strong>. At this year, substituting (10) into (5):</p>
-                <div class="formula-box">
-                    $$B_{t^*} = C_{\min} \cdot A_{t^*} - V_{t^*} = \frac{V_{t^*}}{A_{t^*}} \cdot A_{t^*} - V_{t^*} = 0 \tag{11}$$
-                </div>
+                <p>The outer max ensures \(C_{\min} \geq 0\) (if the starting budget covers all fees, no contributions are needed). The year \(t^*\) where the inner maximum is achieved is the <strong>binding constraint year</strong>.</p>
 
                 <h3>8. Why the Naive Approach Can Fail</h3>
-                <p>A naive present-value approach sets contributions equal to fees in present value terms, which is equivalent to enforcing only the terminal constraint \(B_T = 0\) from (8):</p>
+                <p>A naive present-value approach sets contributions equal to fees in present value terms, which is equivalent to enforcing only the terminal constraint \(B_T = 0\) from (10):</p>
                 <div class="formula-box">
-                    $$C_{\text{naive}} = \frac{V_T}{A_T} \tag{12}$$
+                    $$C_{\text{naive}} = \frac{V_T - S_T}{A_T} \tag{13}$$
                 </div>
 
-                <p>Comparing (12) with our solution (10), the naive approach fails when an intermediate year \(t < T\) has:</p>
+                <p>Comparing (13) with our solution (12), the naive approach fails when an intermediate year \(t < T\) has:</p>
                 <div class="formula-box">
-                    $$\frac{V_t}{A_t} > \frac{V_T}{A_T}$$
+                    $$\frac{V_t - S_t}{A_t} > \frac{V_T - S_T}{A_T}$$
                 </div>
 
-                <p>In this case, using \(C_{\text{naive}}\) in equation (5) gives \(B_t = C_{\text{naive}} \cdot A_t - V_t < 0\), so the account goes negative, requiring borrowing.</p>
+                <p>In this case, using \(C_{\text{naive}}\) in equation (6) gives \(B_t = S_t + C_{\text{naive}} \cdot A_t - V_t < 0\), so the account goes negative, requiring borrowing.</p>
 
-                <p><strong>When does this happen?</strong> From equations (6) and (7), the ratio \(V_t / A_t\) increases when fees are paid (adding to \(V_t\)) and decreases when contributions are made without corresponding fees (adding to \(A_t\)). An intermediate year becomes binding when:</p>
+                <p><strong>When does this happen?</strong> From equations (8) and (9), the ratio \((V_t - S_t) / A_t\) increases when fees are paid (adding to \(V_t\)) and decreases when contributions are made without corresponding fees (adding to \(A_t\)). An intermediate year becomes binding when:</p>
                 <ul>
                     <li>Multiple children overlap, creating a "fee hump"</li>
                     <li>Contributions stop early (Mode 1) while fees continue</li>
@@ -854,7 +864,7 @@
                     </tbody>
                 </table>
 
-                <p><strong>Computing \(A_t\) and \(V_t\)</strong> using recurrences (6) and (7) with \(r = 0.05\):</p>
+                <p><strong>Computing \(A_t\) and \(V_t\)</strong> using recurrences (8) and (9) with \(r = 0.05\) and \(S = 0\):</p>
                 <table class="example-table">
                     <thead>
                         <tr><th>Year \(t\)</th><th>\(A_t\)</th><th>\(V_t\)</th><th>\(V_t / A_t\)</th></tr>
@@ -871,9 +881,9 @@
                     </tbody>
                 </table>
 
-                <p>Applying equation (10), the maximum ratio occurs at <strong>year 4</strong> (value £21,943), not year 8. This is the binding constraint year \(t^* = 4\). Using the naive approach (12) would give \(C_{\text{naive}} = 15{,}340\), but substituting into (5) gives \(B_4 = 15{,}340 \times 4.310 - 94{,}575 = -28{,}470 < 0\), so the account goes negative.</p>
+                <p>Applying equation (12) with \(S = 0\), the maximum ratio occurs at <strong>year 4</strong> (value £21,943), not year 8. This is the binding constraint year \(t^* = 4\). Using the naive approach (13) would give \(C_{\text{naive}} = 15{,}340\), but substituting into (6) gives \(B_4 = 15{,}340 \times 4.310 - 94{,}575 = -28{,}470 < 0\), so the account goes negative.</p>
 
-                <p>The correct minimum contribution from (10) is \(C_{\min} = £21{,}943\) per year, ensuring \(B_t \geq 0\) for all \(t\) as required by (8).</p>
+                <p>The correct minimum contribution from (12) is \(C_{\min} = £21{,}943\) per year, ensuring \(B_t \geq 0\) for all \(t\) as required by (10).</p>
 
                 <h3>10. Key Insights</h3>
                 <p>The ratio \(\rho = \frac{1+g}{1+r}\) (appearing in the fee calculations) determines the relationship between fee growth and investment returns:</p>
@@ -883,9 +893,9 @@
                     <li>If \(g = r\) (so \(\rho = 1\)): They balance out; each year's fee has the same present value</li>
                 </ul>
 
-                <p>In <strong>Mode 1</strong>, once contributions stop (\(I_t = 0\)), examining equations (6) and (7) shows that \(A_t\) only grows by compounding while \(V_t\) grows by compounding plus new fees. Thus \(V_t / A_t\) can only increase (when fees are paid) or stay constant (during gaps), so the binding constraint in (10) is always the terminal year. The naive approach (12) suffices.</p>
+                <p>In <strong>Mode 1</strong>, once contributions stop (\(I_t = 0\)), examining equations (8) and (9) shows that \(A_t\) only grows by compounding while \(V_t\) grows by compounding plus new fees. Thus \((V_t - S_t) / A_t\) can only increase (when fees are paid) or stay constant (during gaps), so the binding constraint in (12) is always the terminal year. The naive approach (13) suffices.</p>
 
-                <p>In <strong>Mode 2</strong>, ongoing contributions (\(I_t = 1\)) add to \(A_t\) each year, which can cause the ratio \(V_t / A_t\) to decrease during gap years or when fees drop. This is precisely when an intermediate year can become the binding constraint in (10), and the liquidity-aware calculation becomes essential.</p>
+                <p>In <strong>Mode 2</strong>, ongoing contributions (\(I_t = 1\)) add to \(A_t\) each year, which can cause the ratio \((V_t - S_t) / A_t\) to decrease during gap years or when fees drop. This is precisely when an intermediate year can become the binding constraint in (12), and the liquidity-aware calculation becomes essential.</p>
             </div>
         </div>
     </section>
@@ -945,18 +955,19 @@
     /**
      * Calculate the minimum contribution using liquidity constraints.
      *
-     * Balance evolution: B_t = (1+r) * B_{t-1} + I_t * C - F_t
+     * Balance evolution: B_t = (1+r) * B_{t-1} + I_t * C - F_t, with B_0 = S
      *
-     * Closed form: B_t = C * A_t - V_t
+     * Closed form: B_t = S * (1+r)^t + C * A_t - V_t
      * where:
+     *   S = starting budget
      *   A_t = sum_{s=1}^{t} I_s * (1+r)^{t-s}  (accumulated contribution factor)
      *   V_t = sum_{s=1}^{t} F_s * (1+r)^{t-s}  (accumulated fee value)
      *
-     * For B_t >= 0: C >= V_t / A_t
+     * For B_t >= 0: C >= (V_t - S*(1+r)^t) / A_t
      *
-     * C_min = max over all t of (V_t / A_t)
+     * C_min = max over all t of (V_t - S_t) / A_t, where S_t = S*(1+r)^t
      */
-    function calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring) {
+    function calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring, startingBudget = 0) {
         const firstStart = Math.min(...startYears);
         const lastFeeYear = Math.max(...startYears) + n - 1;  // Last year of school
         const totalYears = lastFeeYear;
@@ -966,23 +977,31 @@
 
         let A_t = 0;  // Accumulated contribution factor
         let V_t = 0;  // Accumulated fee value
+        let S_t = startingBudget;  // Starting budget compounded to year t
         let C_min = 0;
         let bindingYear = 1;
 
         for (let t = 1; t <= totalYears; t++) {
+            // Compound starting budget forward
+            S_t = S_t * (1 + r);
             // Update accumulated values: compound previous values and add current
             A_t = (1 + r) * A_t + indicator[t];
             V_t = (1 + r) * V_t + fees[t];
 
             // Calculate required contribution for this year's constraint
+            // C >= (V_t - S_t) / A_t
             if (A_t > 1e-10) {
-                const ratio = V_t / A_t;
+                const effectiveV = V_t - S_t;
+                const ratio = effectiveV / A_t;
                 if (ratio > C_min) {
                     C_min = ratio;
                     bindingYear = t;
                 }
             }
         }
+
+        // Ensure non-negative (if starting budget covers everything)
+        C_min = Math.max(0, C_min);
 
         // Also compute total PV for display purposes (using the standard formula)
         const pvTotal = computeTotalPV(A, g, r, n, startYears);
@@ -1027,7 +1046,7 @@
      *   2. Add contribution if applicable
      *   3. Pay fees
      */
-    function generateCashFlows(A, g, r, n, startYears, contribution, continueDuring) {
+    function generateCashFlows(A, g, r, n, startYears, contribution, continueDuring, startingBudget = 0) {
         const firstStart = Math.min(...startYears);
         const lastFeeYear = Math.max(...startYears) + n - 1;  // Last year of school
         const totalYears = lastFeeYear;
@@ -1036,7 +1055,7 @@
         const indicator = buildContributionIndicator(continueDuring, firstStart, totalYears);
 
         const cashFlows = [];
-        let balance = 0;
+        let balance = startingBudget;
 
         for (let year = 1; year <= totalYears; year++) {
             const investmentReturn = balance * r;
@@ -1082,6 +1101,7 @@
         const n = parseInt(document.getElementById('schoolYears').value);
         const g = parseFloat(document.getElementById('inflation').value) / 100;
         const r = parseFloat(document.getElementById('returnRate').value) / 100;
+        const S_original = parseNumber(document.getElementById('startingBudget').value) || 0;
         const D = parseInt(document.getElementById('delayYears').value) || 0;
         const continueDuring = document.getElementById('continueDuring').checked;
 
@@ -1097,20 +1117,22 @@
         // Transform inputs: shift timeline so year 1 = when saving starts
         // A' = A × (1+g)^D (fee has already inflated by D years)
         // Y' = Y - D (school is D years closer from when we start saving)
+        // S' = S × (1+r)^D (starting budget has compounded by D years)
         const A = A_original * Math.pow(1 + g, D);
         const startYears = startYears_original.map(y => y - D);
+        const S = S_original * Math.pow(1 + r, D);
 
         const firstStart = Math.min(...startYears);
         const lastFeeYear = Math.max(...startYears) + n - 1;
 
-        return { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear, D, A_original, startYears_original };
+        return { A, startYears, n, g, r, S, continueDuring, firstStart, lastFeeYear, D, A_original, startYears_original, S_original };
     }
 
     function calculate() {
         try {
-            const { A, startYears, n, g, r, continueDuring, firstStart, lastFeeYear, D, A_original, startYears_original } = getInputs();
+            const { A, startYears, n, g, r, S, continueDuring, firstStart, lastFeeYear, D, A_original, startYears_original, S_original } = getInputs();
 
-            const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring);
+            const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring, S);
             const { contribution, bindingYear, pvTotal, contributionYears } = result;
 
             document.getElementById('results').style.display = 'block';
@@ -1121,17 +1143,18 @@
                 : `${startYears_original.length} children starting in years ${startYears_original.join(', ')}`;
 
             const delayText = D > 0 ? `Saving starts in ${D} years · ` : '';
+            const budgetText = S_original > 0 ? `Starting budget: ${formatCurrency(S_original)} · ` : '';
 
             document.getElementById('resultDetails').innerHTML = `
                 ${childText} · ${n} years of schooling<br>
-                ${delayText}Contributing for ${contributionYears} years<br>
+                ${budgetText}${delayText}Contributing for ${contributionYears} years<br>
                 Total fees present value: ${formatCurrency(pvTotal)}<br>
                 <strong>Binding constraint: Year ${bindingYear}</strong> (of saving timeline)
             `;
 
-            updateChart(A, startYears, n, continueDuring, g, r);
+            updateChart(A, startYears, n, continueDuring, g, r, S);
 
-            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring);
+            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring, S);
             updateCashFlowTable(cashFlows, bindingYear);
 
         } catch (e) {
@@ -1139,7 +1162,7 @@
         }
     }
 
-    function updateChart(A, startYears, n, continueDuring, inputInflation, inputReturn) {
+    function updateChart(A, startYears, n, continueDuring, inputInflation, inputReturn, startingBudget = 0) {
         // Center the sensitivity analysis around user's input values
         const inflationOffsets = [-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03];
         const returnOffsets = [-0.02, -0.01, 0, 0.01, 0.02];
@@ -1159,7 +1182,7 @@
 
         const datasets = returnRates.map((retRate, idx) => {
             const contributions = inflationRates.map(infRate => {
-                const result = calculateLiquidityConstrained(A, infRate, retRate, n, startYears, continueDuring);
+                const result = calculateLiquidityConstrained(A, infRate, retRate, n, startYears, continueDuring, startingBudget);
                 return result.contribution;
             });
 
@@ -1259,11 +1282,11 @@
 
     function downloadCSV() {
         try {
-            const { A, startYears, n, g, r, continueDuring, D, A_original, startYears_original } = getInputs();
-            const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring);
+            const { A, startYears, n, g, r, S, continueDuring, D, A_original, startYears_original, S_original } = getInputs();
+            const result = calculateLiquidityConstrained(A, g, r, n, startYears, continueDuring, S);
             const { contribution, bindingYear, pvTotal } = result;
 
-            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring);
+            const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring, S);
 
             const headers = ['Year', 'Contribution', 'Fee Payment', 'Investment Return', 'End Balance', 'Binding Year'];
             const rows = cashFlows.map(cf => [
@@ -1282,6 +1305,7 @@
                 ['Annual Fee (today)', A_original],
                 ['Children start years (from today)', startYears_original.join('; ')],
                 ['Years of schooling', n],
+                ['Starting budget', S_original],
                 ['Delay before saving (years)', D],
                 ['Fee inflation rate', (g * 100).toFixed(1) + '%'],
                 ['Investment return rate', (r * 100).toFixed(1) + '%'],
