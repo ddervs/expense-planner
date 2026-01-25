@@ -1190,13 +1190,13 @@
                 ${childText} · ${n} years of schooling<br>
                 ${budgetText}${delayText}Contributing for ${contributionYears} years<br>
                 Total fees present value: ${formatCurrency(pvTotal)}<br>
-                <strong>Binding constraint: Year ${bindingYear}</strong> (of saving timeline)
+                <strong>Binding constraint: Year ${bindingYear + D}</strong>
             `;
 
             updateChart(A, startYears, n, continueDuring, g, r, S);
 
             const cashFlows = generateCashFlows(A, g, r, n, startYears, contribution, continueDuring, S);
-            updateCashFlowTable(cashFlows, bindingYear);
+            updateCashFlowTable(cashFlows, bindingYear, D);
 
         } catch (e) {
             alert(e.message);
@@ -1301,17 +1301,18 @@
         });
     }
 
-    function updateCashFlowTable(cashFlows, bindingYear) {
+    function updateCashFlowTable(cashFlows, bindingYear, delay = 0) {
         const tbody = document.getElementById('cashflowBody');
         tbody.innerHTML = cashFlows.map(cf => {
             const isBinding = cf.year === bindingYear;
+            const calendarYear = cf.year + delay;  // Convert to years from today
             const rowClass = isBinding ? 'binding-row' : '';
             const contribClass = cf.contribution > 0 ? 'positive' : '';
             const contribText = cf.contribution > 0 ? '+' + formatCurrency(cf.contribution) : '—';
 
             return `
                 <tr class="${rowClass}">
-                    <td>${cf.year}${isBinding ? ' *' : ''}</td>
+                    <td>${calendarYear}${isBinding ? ' *' : ''}</td>
                     <td class="${contribClass}">${contribText}</td>
                     <td class="${cf.feePayment > 0 ? 'negative' : ''}">${cf.feePayment > 0 ? '-' + formatCurrency(cf.feePayment) : '—'}</td>
                     <td class="${cf.investmentReturn >= 0 ? 'positive' : 'negative'}">${cf.investmentReturn >= 0 ? '+' : ''}${formatCurrency(cf.investmentReturn)}</td>
