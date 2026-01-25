@@ -122,11 +122,25 @@
         box-shadow: 0 2px 8px var(--shadow);
     }
 
+    .input-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .input-section-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
     .input-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1.5rem;
-        margin-bottom: 2rem;
     }
 
     .input-group {
@@ -169,6 +183,19 @@
         padding: 1rem 0;
         border-top: 1px solid var(--border);
         margin-top: 0.5rem;
+    }
+
+    .toggle-group.in-grid {
+        border-top: none;
+        padding: 0;
+        margin-top: 0;
+        align-items: flex-start;
+        padding-top: 1.6rem;
+    }
+
+    .toggle-group.in-grid label:not(.toggle-switch) {
+        font-size: 0.9rem;
+        line-height: 1.5;
     }
 
     .toggle-group label {
@@ -515,47 +542,61 @@
     <section id="calculator">
         <h2>Calculator</h2>
         <div class="calculator-card">
-            <div class="input-grid">
-                <div class="input-group">
-                    <label for="annualFee">Annual Fee (£)</label>
-                    <input type="text" id="annualFee" value="15,000" inputmode="numeric">
-                    <span class="hint">Today's prices</span>
-                </div>
-                <div class="input-group">
-                    <label for="startYears">Years until school starts</label>
-                    <input type="text" id="startYears" value="5" placeholder="e.g. 5 or 5, 8">
-                    <span class="hint">Comma-separated for multiple children</span>
-                </div>
-                <div class="input-group">
-                    <label for="schoolYears">Years of schooling</label>
-                    <input type="number" id="schoolYears" value="7" min="1" max="20">
-                </div>
-                <div class="input-group">
-                    <label for="startingBudget">Starting budget (£)</label>
-                    <input type="text" id="startingBudget" value="0" inputmode="numeric">
-                    <span class="hint">Funds already saved</span>
-                </div>
-                <div class="input-group">
-                    <label for="delayYears">Saving starts in (years)</label>
-                    <input type="number" id="delayYears" value="0" min="0" max="20">
-                    <span class="hint">0 = start now</span>
-                </div>
-                <div class="input-group">
-                    <label for="inflation">Fee inflation (%)</label>
-                    <input type="number" id="inflation" value="4" min="0" max="15" step="0.5">
-                </div>
-                <div class="input-group">
-                    <label for="returnRate">Investment return (%)</label>
-                    <input type="number" id="returnRate" value="5" min="0" max="20" step="0.5">
+            <div class="input-section">
+                <div class="input-section-label">School</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="annualFee">Annual Fee (£)</label>
+                        <input type="text" id="annualFee" value="15,000" inputmode="numeric">
+                        <span class="hint">Today's prices</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="startYears">Years until school starts</label>
+                        <input type="text" id="startYears" value="5" placeholder="e.g. 5 or 5, 8">
+                        <span class="hint">Comma-separated for multiple children</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="schoolYears">Years of schooling</label>
+                        <input type="number" id="schoolYears" value="7" min="1" max="20">
+                    </div>
                 </div>
             </div>
-            
-            <div class="toggle-group">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="continueDuring">
-                    <span class="toggle-slider"></span>
-                </label>
-                <label for="continueDuring">Continue contributions during school years</label>
+
+            <div class="input-section">
+                <div class="input-section-label">Your Savings</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="startingBudget">Starting budget (£)</label>
+                        <input type="text" id="startingBudget" value="0" inputmode="numeric">
+                        <span class="hint">Funds already saved</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="delayYears">Saving starts in (years)</label>
+                        <input type="number" id="delayYears" value="0" min="0" max="20">
+                        <span class="hint">0 = start now</span>
+                    </div>
+                    <div class="toggle-group in-grid">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="continueDuring">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <label for="continueDuring">Continue during school</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-section-label">Assumptions</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="inflation">Fee inflation (%)</label>
+                        <input type="number" id="inflation" value="4" min="0" max="15" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="returnRate">Investment return (%)</label>
+                        <input type="number" id="returnRate" value="5" min="0" max="20" step="0.5">
+                    </div>
+                </div>
             </div>
 
             <div class="button-row" style="margin-top: 1.5rem;">
