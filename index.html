@@ -2579,9 +2579,12 @@
             };
         } else if (type === 'upfront') {
             const baseHR = r.inp.homeReportValue;
+            const offerMin = baseHR * 0.95;
+            const offerMax = baseHR * 1.20;
+            const offerStep = baseHR * 0.025;
             const offers = [];
-            for (let o = baseHR - 20000; o <= baseHR + 50000 + 1e-9; o += 5000) {
-                if (o > 0) offers.push(o);
+            for (let o = offerMin; o <= offerMax + 1e-9; o += offerStep) {
+                if (o > 0) offers.push(Math.round(o));
             }
             const ltvs = [0.70, 0.75, 0.80, 0.85, 0.90];
             const fixedFees = r.inp.purchaseSolicitor + r.inp.additionalSurvey
@@ -2611,7 +2614,7 @@
                 type: 'line',
                 data: {
                     labels: offers.map(o => {
-                        const isInput = Math.abs(o - r.inp.offerPrice) < 2500;
+                        const isInput = Math.abs(o - r.inp.offerPrice) < offerStep / 2;
                         return formatCurrency(o) + (isInput ? '*' : '');
                     }),
                     datasets
