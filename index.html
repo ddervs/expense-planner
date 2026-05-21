@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Fund Planner</title>
+    <title>Financial Planning Tools</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -493,6 +493,213 @@
         display: block;
     }
 
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+    }
+
+    .back-link::before {
+        content: '←';
+    }
+
+    .back-link:hover {
+        color: var(--accent);
+    }
+
+    .tool-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .tool-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px var(--shadow);
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: block;
+    }
+
+    .tool-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px var(--shadow);
+    }
+
+    .tool-card h2 {
+        color: var(--accent);
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .tool-card p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .result-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .result-card h3 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    .headline-amount {
+        font-family: var(--font-mono);
+        font-size: 1.6rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin: 0.5rem 0 1rem;
+    }
+
+    .headline-amount.positive { color: var(--accent); }
+    .headline-amount.negative { color: #b54848; }
+
+    .breakdown-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+        gap: 1rem;
+    }
+
+    .breakdown-row:last-child {
+        border-bottom: none;
+    }
+
+    .breakdown-row.total {
+        border-top: 2px solid var(--accent);
+        border-bottom: none;
+        padding-top: 0.75rem;
+        margin-top: 0.25rem;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .breakdown-label {
+        color: var(--text-secondary);
+        flex: 1;
+    }
+
+    .breakdown-label .sub {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 0.15rem;
+    }
+
+    .breakdown-value {
+        font-family: var(--font-mono);
+        color: var(--text-primary);
+        white-space: nowrap;
+    }
+
+    .warn-box {
+        background: #fff3e0;
+        border-left: 4px solid #d97706;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0 0;
+        border-radius: 0 4px 4px 0;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+    }
+
+    .warn-box.ok {
+        background: var(--accent-light);
+        border-left-color: var(--accent);
+    }
+
+    .chart-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .chart-controls label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .chart-controls select {
+        font-family: var(--font-serif);
+        font-size: 0.95rem;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+
+    .stress-test {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .stress-test th {
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        padding: 0.5rem 0.75rem;
+        text-align: right;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .stress-test th:first-child {
+        text-align: left;
+    }
+
+    .stress-test td {
+        font-family: var(--font-mono);
+        padding: 0.5rem 0.75rem;
+        text-align: right;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .stress-test td:first-child {
+        text-align: left;
+        font-family: var(--font-serif);
+        color: var(--text-secondary);
+    }
+
+    .stress-test tr:last-child td {
+        border-bottom: none;
+    }
+
     @media (max-width: 600px) {
         body {
             font-size: 16px;
@@ -521,6 +728,10 @@
         .results-summary .amount {
             font-size: 1.5rem;
         }
+
+        .headline-amount {
+            font-size: 1.3rem;
+        }
     }
 </style>
 
@@ -534,6 +745,25 @@
     </div>
 
 <div id="app">
+    <div id="landing-view" class="view">
+        <header>
+            <h1>Financial Planning Tools</h1>
+            <p>Choose a planner to get started.</p>
+        </header>
+        <div class="tool-cards">
+            <a href="#finplanner/school" class="tool-card">
+                <h2>School Fund Planner</h2>
+                <p>Calculate required annual savings for school fees, accounting for inflation, investment returns, and overlapping children.</p>
+            </a>
+            <a href="#finplanner/property" class="tool-card">
+                <h2>Property Move Planner</h2>
+                <p>Plan a Scottish property move: upfront cash needed (LBTT, ADS, registration), monthly running costs, and sensitivity to assumptions.</p>
+            </a>
+        </div>
+    </div>
+
+    <div id="school-view" class="view" style="display:none">
+    <a href="#finplanner" class="back-link">Back to tools</a>
     <header>
         <h1>School Fund Planner</h1>
         <p>Calculate required savings for school fees, accounting for inflation and investment returns.</p>
@@ -940,19 +1170,456 @@
             </div>
         </div>
     </section>
+    </div><!-- /school-view -->
+
+    <div id="property-view" class="view" style="display:none">
+        <a href="#finplanner" class="back-link">Back to tools</a>
+        <header>
+            <h1>Property Move Planner</h1>
+            <p>Plan a Scottish property move: cash needed at completion, monthly costs, and sensitivity to assumptions. All rates per Revenue Scotland and Registers of Scotland.</p>
+        </header>
+
+        <section>
+            <h2>Calculator</h2>
+            <div class="calculator-card">
+                <div class="input-section">
+                    <div class="input-section-label">Current Position</div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="p-currentValue">Current property value (£)</label>
+                            <input type="text" id="p-currentValue" value="350,000" inputmode="numeric">
+                            <span class="hint">Expected sale price</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-outstandingMortgage">Outstanding mortgage (£)</label>
+                            <input type="text" id="p-outstandingMortgage" value="180,000" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-earlyRepaymentCharge">Early repayment charge (£)</label>
+                            <input type="text" id="p-earlyRepaymentCharge" value="0" inputmode="numeric">
+                            <span class="hint">From mortgage statement</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-agentFee">Estate agent fee (%)</label>
+                            <input type="number" id="p-agentFee" value="1.25" min="0" max="5" step="0.05">
+                            <span class="hint">Of sale price</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-saleSolicitor">Sale solicitor (£)</label>
+                            <input type="text" id="p-saleSolicitor" value="1,200" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-homeReportSeller">Home Report (£)</label>
+                            <input type="text" id="p-homeReportSeller" value="500" inputmode="numeric">
+                            <span class="hint">Seller provides</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-savings">Cash savings (£)</label>
+                            <input type="text" id="p-savings" value="50,000" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-income">Annual gross income (£)</label>
+                            <input type="text" id="p-income" value="80,000" inputmode="numeric">
+                            <span class="hint">Combined if joint</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="input-section-label">Target Purchase</div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="p-homeReportValue">Home Report value (£)</label>
+                            <input type="text" id="p-homeReportValue" value="450,000" inputmode="numeric">
+                            <span class="hint">Caps the mortgage</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-offerPrice">Offer price (£)</label>
+                            <input type="text" id="p-offerPrice" value="475,000" inputmode="numeric">
+                            <span class="hint">What you actually pay</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-ltv">LTV (%)</label>
+                            <input type="number" id="p-ltv" value="80" min="0" max="100" step="1">
+                            <span class="hint">Loan-to-value against HR</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-bridgingMonths">Bridging gap (months)</label>
+                            <input type="number" id="p-bridgingMonths" value="0" min="0" max="36" step="1">
+                            <span class="hint">0 = simultaneous (no ADS)</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-mortgageTerm">Mortgage term (years)</label>
+                            <input type="number" id="p-mortgageTerm" value="25" min="5" max="40" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-mortgageRate">Mortgage rate (%)</label>
+                            <input type="number" id="p-mortgageRate" value="4.5" min="0" max="15" step="0.1">
+                        </div>
+                        <div class="toggle-group in-grid">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="p-interestOnly">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label for="p-interestOnly">Interest only</label>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-mortgageProductFee">Mortgage product fee (£)</label>
+                            <input type="text" id="p-mortgageProductFee" value="1,000" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="input-section-label">Other Upfront Costs</div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="p-purchaseSolicitor">Purchase solicitor (£)</label>
+                            <input type="text" id="p-purchaseSolicitor" value="1,500" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-additionalSurvey">Additional survey (£)</label>
+                            <input type="text" id="p-additionalSurvey" value="500" inputmode="numeric">
+                            <span class="hint">Beyond Home Report</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-movingCosts">Moving costs (£)</label>
+                            <input type="text" id="p-movingCosts" value="1,500" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-firstYearInsurance">First year insurance (£)</label>
+                            <input type="text" id="p-firstYearInsurance" value="350" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="input-section-label">Monthly Running Costs (entered as annual £)</div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="p-councilTax">Council Tax (£/year)</label>
+                            <input type="text" id="p-councilTax" value="2,400" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-insuranceAnnual">Buildings insurance (£/year)</label>
+                            <input type="text" id="p-insuranceAnnual" value="350" inputmode="numeric">
+                        </div>
+                        <div class="input-group">
+                            <label for="p-factorFees">Factor fees (£/year)</label>
+                            <input type="text" id="p-factorFees" value="0" inputmode="numeric">
+                            <span class="hint">For flats</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-maintenancePercent">Maintenance reserve (%/year)</label>
+                            <input type="number" id="p-maintenancePercent" value="1" min="0" max="5" step="0.25">
+                            <span class="hint">Of property value</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="input-section-label">Assumptions</div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="p-investmentReturn">Investment return (%)</label>
+                            <input type="number" id="p-investmentReturn" value="5" min="0" max="15" step="0.25">
+                            <span class="hint">Used for ADS opportunity cost</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="p-propertyGrowth">Property growth (%/yr)</label>
+                            <input type="number" id="p-propertyGrowth" value="3" min="-5" max="15" step="0.25">
+                            <span class="hint">Forecast for equity column</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-row" style="margin-top: 1.5rem;">
+                    <button class="btn btn-primary" onclick="propertyCalculate()">Calculate</button>
+                    <button class="btn btn-secondary" onclick="propertyDownloadCSV()">Download CSV</button>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="collapsible-trigger" onclick="toggleCollapsible(this)">Guide</h2>
+            <div class="collapsible-content">
+                <div class="explanation">
+                    <h3>What This Tool Does</h3>
+                    <p>This calculator models a Scottish property move: estimating the cash you need at completion, the ongoing monthly cost, and the sensitivity of those numbers to your inputs. It applies Scottish-specific rules &mdash; LBTT (not stamp duty), ADS (the additional-dwelling surcharge), Registers of Scotland dues, and the Home Report's role in capping mortgage lending.</p>
+
+                    <h3>Inputs by Section</h3>
+                    <p><strong>Current Position</strong> covers your existing property, the costs of selling it, your cash savings, and your income. Estate agent fees in Scotland are typically 1&ndash;2% of sale price; sale solicitor fees usually £800&ndash;£1,500.</p>
+                    <p><strong>Target Purchase</strong> separates the Home Report value (what the surveyor says it's worth, which caps the mortgage) from the offer price (what you actually pay). LTV is your loan-to-value ratio against the Home Report. The bridging gap is the number of months between completing the purchase and completing the sale &mdash; if positive, ADS applies and is reclaimable later.</p>
+                    <p><strong>Other Upfront Costs</strong> are fees paid around completion: purchase solicitor, an optional buyer's survey beyond the Home Report, moving, first year's buildings insurance.</p>
+                    <p><strong>Monthly Running Costs</strong> are entered as annual £ amounts &mdash; the calculator divides by 12 for the headline figure.</p>
+                    <p><strong>Assumptions</strong>: investment return is used to compute the opportunity cost of ADS sitting with Revenue Scotland; property growth is used to project future equity in the amortisation table.</p>
+
+                    <h3>Results Cards</h3>
+                    <p>The four cards summarise: cash needed at completion (decomposed), funding available (savings plus net sale proceeds), the mortgage (loan amount, monthly payment, LTV, LTI), and the monthly total cost of ownership. The <strong>affordability stress test</strong> shows the monthly payment at your rate, plus 2 percentage points, plus 3 points &mdash; the kind of shock UK rates absorbed in 2022.</p>
+
+                    <h3>Sensitivity Analysis</h3>
+                    <p>Three modes, switchable from the dropdown:</p>
+                    <ul>
+                        <li><strong>Monthly payment vs interest rate</strong> &mdash; lines for different mortgage terms.</li>
+                        <li><strong>Upfront cash vs offer price</strong> &mdash; lines for different LTVs. Shows the cliff when offer exceeds Home Report.</li>
+                        <li><strong>Net ADS cost vs bridging months</strong> &mdash; how much the 8% temporary outlay actually costs you, depending on the investment return you forego.</li>
+                    </ul>
+
+                    <h3>Amortisation Schedule</h3>
+                    <p>Year-by-year mortgage breakdown: interest, principal, remaining balance, and equity (assuming the chosen property-growth rate).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="p-results-section">
+            <h2>Results</h2>
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3>Cash needed at completion</h3>
+                    <div class="headline-amount" id="p-cashNeeded">—</div>
+                    <div id="p-cashBreakdown"></div>
+                </div>
+                <div class="result-card">
+                    <h3>Funding available</h3>
+                    <div class="headline-amount" id="p-fundingAvailable">—</div>
+                    <div id="p-fundingBreakdown"></div>
+                    <div id="p-positionWarn"></div>
+                </div>
+                <div class="result-card">
+                    <h3>Mortgage</h3>
+                    <div class="headline-amount" id="p-monthlyPayment">—</div>
+                    <div id="p-mortgageBreakdown"></div>
+                </div>
+                <div class="result-card">
+                    <h3>Monthly running cost</h3>
+                    <div class="headline-amount" id="p-monthlyRunning">—</div>
+                    <div id="p-runningBreakdown"></div>
+                </div>
+            </div>
+
+            <div class="result-card" style="margin-top: 1rem">
+                <h3>Affordability stress test</h3>
+                <table class="stress-test">
+                    <thead>
+                        <tr><th>Scenario</th><th>Rate</th><th>Monthly</th><th>% of net income</th></tr>
+                    </thead>
+                    <tbody id="p-stressBody"></tbody>
+                </table>
+                <div id="p-ltiWarn"></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Sensitivity Analysis</h2>
+            <div class="chart-controls">
+                <label for="p-sensitivityType">Show:</label>
+                <select id="p-sensitivityType" onchange="propertyUpdateChart()">
+                    <option value="payment">Monthly payment vs interest rate (lines: term)</option>
+                    <option value="upfront">Upfront cash vs offer price (lines: LTV)</option>
+                    <option value="ads">Net ADS cost vs bridging months (lines: return rate)</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="propertyChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Mortgage Amortisation Schedule</h2>
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Year-by-Year</h3>
+                </div>
+                <div class="table-scroll">
+                    <table id="p-amortTable">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Interest</th>
+                                <th>Principal</th>
+                                <th>Remaining</th>
+                                <th>Property value</th>
+                                <th>Equity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="p-amortBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="collapsible-trigger" onclick="toggleCollapsible(this)">Mathematical Explanation</h2>
+            <div class="collapsible-content">
+                <div class="explanation">
+                    <h3>1. LBTT &mdash; Land and Buildings Transaction Tax</h3>
+                    <p>LBTT is Scotland's transaction tax on residential property purchases, paid by the buyer. It is charged on a <strong>marginal banded</strong> basis: only the portion of the price falling within each band is taxed at that band's rate.</p>
+
+                    <p><strong>Current residential bands</strong> (unchanged for 2026&ndash;27):</p>
+                    <table class="example-table">
+                        <thead><tr><th>Band</th><th>Rate</th></tr></thead>
+                        <tbody>
+                            <tr><td>£0 &ndash; £145,000</td><td>0%</td></tr>
+                            <tr><td>£145,001 &ndash; £250,000</td><td>2%</td></tr>
+                            <tr><td>£250,001 &ndash; £325,000</td><td>5%</td></tr>
+                            <tr><td>£325,001 &ndash; £750,000</td><td>10%</td></tr>
+                            <tr><td>Over £750,000</td><td>12%</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p>For a purchase price \(P\), with band lower thresholds \(l_i\), upper thresholds \(u_i\), and marginal rates \(r_i\):</p>
+                    <div class="formula-box">
+                        $$\text{LBTT}(P) = \sum_i \max\bigl(0,\; \min(P, u_i) - l_i\bigr) \cdot r_i$$
+                    </div>
+
+                    <p><strong>Worked example</strong> &mdash; offer £475,000:</p>
+                    <ul>
+                        <li>£0&ndash;£145,000 at 0% = £0</li>
+                        <li>£145,001&ndash;£250,000 (£105,000) at 2% = £2,100</li>
+                        <li>£250,001&ndash;£325,000 (£75,000) at 5% = £3,750</li>
+                        <li>£325,001&ndash;£475,000 (£150,000) at 10% = £15,000</li>
+                        <li><strong>Total LBTT = £20,850</strong></li>
+                    </ul>
+
+                    <h3>2. Additional Dwelling Supplement (ADS)</h3>
+                    <p>ADS is a flat <strong>8% surcharge</strong> on the full purchase price, applied to any additional dwelling purchase of £40,000 or more. For someone moving home, ADS is triggered whenever the previous main residence has not yet been sold on the day of the new purchase. If the previous home is then sold within 36 months, the ADS is fully reclaimable from Revenue Scotland.</p>
+
+                    <p>Although the ADS is fully refundable, it has a real economic cost: the 8% sits with Revenue Scotland for \(m\) months instead of earning your investment return \(r\). The opportunity cost (present value lost over the holding period) is:</p>
+
+                    <div class="formula-box">
+                        $$\text{ADS}_\text{net}(m) = 0.08 \cdot P \cdot \left(1 - (1+r)^{-m/12}\right)$$
+                    </div>
+
+                    <p>This is the discount-factor formulation: the future £0.08&middot;P refund is worth less than the £0.08&middot;P paid today by exactly the factor \((1 - (1+r)^{-m/12})\). For \(m = 6\) months at \(r = 5\%\) on a £475,000 purchase: \(0.08 \times 475{,}000 \times (1 - 1.05^{-0.5}) \approx £917\). Small relative to the £38,000 gross outlay, but real cash.</p>
+
+                    <h3>3. The Home Report Caps Mortgage Lending</h3>
+                    <p>In Scotland, mortgage lenders rely on the Home Report's surveyed valuation (or commission their own valuation, which typically aligns). They lend up to a chosen loan-to-value ratio against the <strong>lower</strong> of the Home Report value \(V\) and the offer price \(P\) &mdash; never the higher of the two.</p>
+
+                    <div class="formula-box">
+                        $$\text{Mortgage} = \ell \cdot \min(V,\; P)$$
+                    </div>
+
+                    <p>where \(\ell\) is the loan-to-value ratio (e.g. 0.80 for 80% LTV). In the Scottish "Offers Over" market, \(P > V\) is common, and any premium above the Home Report value is entirely unsecured &mdash; you must pay it from cash:</p>
+
+                    <div class="formula-box">
+                        $$\text{Total cash for property} = \underbrace{(1-\ell) \cdot \min(V, P)}_{\text{standard deposit}} \;+\; \underbrace{\max(0,\; P - V)}_{\text{premium above Home Report}}$$
+                    </div>
+
+                    <p><strong>Worked example</strong> &mdash; Home Report £450,000, offer £475,000, LTV 80%:</p>
+                    <ul>
+                        <li>Mortgage = 0.80 &times; £450,000 = £360,000 (not £380,000)</li>
+                        <li>Standard deposit = 0.20 &times; £450,000 = £90,000</li>
+                        <li>Premium above HR = £475,000 &minus; £450,000 = £25,000 (entirely cash)</li>
+                        <li><strong>Total cash for property = £115,000</strong> (not £95,000)</li>
+                    </ul>
+
+                    <h3>4. Mortgage Amortisation</h3>
+                    <p>For a repayment mortgage of principal \(P\), monthly interest rate \(i = r/12\), and term of \(n\) months, each fixed monthly payment \(M\) covers the interest accrued on the outstanding balance plus a portion of principal. The balance after the \(k\)th payment satisfies the recurrence:</p>
+
+                    <div class="formula-box">
+                        $$B_k = B_{k-1}(1+i) - M, \quad B_0 = P$$
+                    </div>
+
+                    <p>Expanding the recurrence and using the geometric series, the closed form is:</p>
+
+                    <div class="formula-box">
+                        $$B_k = P(1+i)^k - M \cdot \frac{(1+i)^k - 1}{i}$$
+                    </div>
+
+                    <p>Applying the boundary condition \(B_n = 0\) (the mortgage is fully paid at term) and solving for \(M\):</p>
+
+                    <div class="formula-box">
+                        $$M = P \cdot \frac{i(1+i)^n}{(1+i)^n - 1}$$
+                    </div>
+
+                    <p>For an <strong>interest-only</strong> mortgage, the monthly payment is simply \(M = P \cdot i\), and the full principal \(P\) is repaid as a balloon at term.</p>
+
+                    <h3>5. Loan-to-Income and Stress Testing</h3>
+                    <p>UK mortgage lenders are subject to the FCA's loan-to-income (LTI) flow limit: no more than 15% of a lender's new mortgages may be at LTI above 4.5&times;. In practice this means 4.5&times; gross household income is a soft cap for most borrowers.</p>
+
+                    <div class="formula-box">
+                        $$\text{LTI} = \frac{\text{Mortgage}}{\text{Annual gross income}}$$
+                    </div>
+
+                    <p>Separately, lenders run affordability stress tests at rates above the offered product rate. This tool shows the monthly payment at the chosen rate, plus +2 and +3 percentage points, so you can see the impact of a rate shock similar to 2022's. As a rough check, total housing cost is often advised to stay below ~35% of net monthly income.</p>
+
+                    <h3>6. Registers of Scotland Registration Dues</h3>
+                    <p>Registers of Scotland charges a banded registration fee when a transfer of ownership is recorded, based on the greater of consideration paid and property value:</p>
+
+                    <table class="example-table">
+                        <thead><tr><th>Value</th><th>Fee</th></tr></thead>
+                        <tbody>
+                            <tr><td>Up to £50,000</td><td>£80</td></tr>
+                            <tr><td>£50,001 &ndash; £100,000</td><td>£140</td></tr>
+                            <tr><td>£100,001 &ndash; £150,000</td><td>£260</td></tr>
+                            <tr><td>£150,001 &ndash; £200,000</td><td>£400</td></tr>
+                            <tr><td>£200,001 &ndash; £300,000</td><td>£530</td></tr>
+                            <tr><td>£300,001 &ndash; £500,000</td><td>£660</td></tr>
+                            <tr><td>£500,001 &ndash; £700,000</td><td>£800</td></tr>
+                            <tr><td>£700,001 &ndash; £1,000,000</td><td>£930</td></tr>
+                            <tr><td>£1,000,001 &ndash; £2,000,000</td><td>£1,100</td></tr>
+                            <tr><td>£2,000,001 &ndash; £3,000,000</td><td>£3,300</td></tr>
+                            <tr><td>£3,000,001 &ndash; £5,000,000</td><td>£5,500</td></tr>
+                            <tr><td>Over £5,000,000</td><td>£8,250</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>7. Sources</h3>
+                    <ul>
+                        <li><a href="https://revenue.scot/taxes/land-buildings-transaction-tax/residential-property" target="_blank" rel="noopener">LBTT residential rates &mdash; Revenue Scotland</a></li>
+                        <li><a href="https://revenue.scot/taxes/land-buildings-transaction-tax/additional-dwelling-supplement-ads" target="_blank" rel="noopener">Additional Dwelling Supplement (ADS) &mdash; Revenue Scotland</a></li>
+                        <li><a href="https://revenue.scot/taxes/land-buildings-transaction-tax/how-submit-amend-or-pay-lbtt/how-claim-repayment-additional-dwelling-supplement" target="_blank" rel="noopener">ADS repayment &mdash; Revenue Scotland</a></li>
+                        <li><a href="https://www.gov.scot/publications/scottish-budget-2026-2027-scottish-tax-ready-reckoners/pages/4/" target="_blank" rel="noopener">LBTT &mdash; Scottish Budget 2026&ndash;27, gov.scot</a></li>
+                        <li><a href="https://kb.ros.gov.uk/fees/registration-fees" target="_blank" rel="noopener">Registration fees &mdash; Registers of Scotland</a></li>
+                        <li><a href="https://www.legislation.gov.uk/sdsi/2021/9780111048962" target="_blank" rel="noopener">Registers of Scotland (Fees) Amendment Order 2021</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
 
 <script>
-    const VALID_HASH = 'finplanner';
+    const VALID_HASH_PREFIX = 'finplanner';
 
     function checkAccess() {
         const hash = window.location.hash.substring(1);
-        if (hash === VALID_HASH) {
+        if (hash === VALID_HASH_PREFIX || hash.startsWith(VALID_HASH_PREFIX + '/')) {
             document.getElementById('access-gate').style.display = 'none';
             document.getElementById('app').classList.add('visible');
             return true;
         }
         return false;
+    }
+
+    function getRoute() {
+        const hash = window.location.hash.substring(1);
+        if (!hash.startsWith(VALID_HASH_PREFIX)) return null;
+        const parts = hash.split('/');
+        return parts[1] || 'landing';
+    }
+
+    let schoolInitialised = false;
+    let propertyInitialised = false;
+
+    function renderRoute() {
+        if (!checkAccess()) return;
+        const route = getRoute();
+        document.getElementById('landing-view').style.display = route === 'landing' ? 'block' : 'none';
+        document.getElementById('school-view').style.display = route === 'school' ? 'block' : 'none';
+        document.getElementById('property-view').style.display = route === 'property' ? 'block' : 'none';
+
+        if (route === 'school' && !schoolInitialised) {
+            calculate();
+            schoolInitialised = true;
+        }
+        if (route === 'property' && !propertyInitialised) {
+            propertyCalculate();
+            propertyInitialised = true;
+        }
+        window.scrollTo(0, 0);
     }
 
     /**
@@ -1117,7 +1784,7 @@
         return cashFlows;
     }
 
-    let chart = null;
+    let schoolChart = null;
 
     function parseNumber(str) {
         return parseFloat(str.replace(/[£,]/g, ''));
@@ -1241,11 +1908,11 @@
 
         const ctx = document.getElementById('sensitivityChart').getContext('2d');
 
-        if (chart) {
-            chart.destroy();
+        if (schoolChart) {
+            schoolChart.destroy();
         }
 
-        chart = new Chart(ctx, {
+        schoolChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: inflationRates.map(infRate => {
@@ -1383,23 +2050,601 @@
         content.classList.toggle('open');
     }
 
+    // ===========================================================
+    // Property Move Planner (Scotland)
+    // ===========================================================
+
+    const LBTT_BANDS = [
+        [0, 145000, 0],
+        [145000, 250000, 0.02],
+        [250000, 325000, 0.05],
+        [325000, 750000, 0.10],
+        [750000, Infinity, 0.12]
+    ];
+
+    const ROS_FEE_BANDS = [
+        [50000, 80],
+        [100000, 140],
+        [150000, 260],
+        [200000, 400],
+        [300000, 530],
+        [500000, 660],
+        [700000, 800],
+        [1000000, 930],
+        [2000000, 1100],
+        [3000000, 3300],
+        [5000000, 5500]
+    ];
+    const ROS_FEE_TOP = 8250;
+
+    function calcLBTT(price) {
+        let tax = 0;
+        for (const [lower, upper, rate] of LBTT_BANDS) {
+            if (price <= lower) break;
+            tax += Math.max(0, Math.min(price, upper) - lower) * rate;
+        }
+        return tax;
+    }
+
+    function calcRosDues(value) {
+        for (const [threshold, fee] of ROS_FEE_BANDS) {
+            if (value <= threshold) return fee;
+        }
+        return ROS_FEE_TOP;
+    }
+
+    function monthlyPayment(principal, annualRate, years, interestOnly) {
+        if (principal <= 0 || years <= 0) return 0;
+        const i = annualRate / 12;
+        const n = years * 12;
+        if (interestOnly) return principal * i;
+        if (i === 0) return principal / n;
+        return principal * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+    }
+
+    function getPropertyInputs() {
+        const get = id => parseNumber(document.getElementById(id).value) || 0;
+        const getN = id => parseFloat(document.getElementById(id).value) || 0;
+
+        const inp = {
+            currentValue:         get('p-currentValue'),
+            outstandingMortgage:  get('p-outstandingMortgage'),
+            earlyRepaymentCharge: get('p-earlyRepaymentCharge'),
+            agentFee:             getN('p-agentFee') / 100,
+            saleSolicitor:        get('p-saleSolicitor'),
+            homeReportSeller:     get('p-homeReportSeller'),
+            savings:              get('p-savings'),
+            income:               get('p-income'),
+            homeReportValue:      get('p-homeReportValue'),
+            offerPrice:           get('p-offerPrice'),
+            ltv:                  getN('p-ltv') / 100,
+            bridgingMonths:       getN('p-bridgingMonths'),
+            mortgageTerm:         getN('p-mortgageTerm'),
+            mortgageRate:         getN('p-mortgageRate') / 100,
+            interestOnly:         document.getElementById('p-interestOnly').checked,
+            mortgageProductFee:   get('p-mortgageProductFee'),
+            purchaseSolicitor:    get('p-purchaseSolicitor'),
+            additionalSurvey:     get('p-additionalSurvey'),
+            movingCosts:          get('p-movingCosts'),
+            firstYearInsurance:   get('p-firstYearInsurance'),
+            councilTax:           get('p-councilTax'),
+            insuranceAnnual:      get('p-insuranceAnnual'),
+            factorFees:           get('p-factorFees'),
+            maintenancePercent:   getN('p-maintenancePercent') / 100,
+            investmentReturn:     getN('p-investmentReturn') / 100,
+            propertyGrowth:       getN('p-propertyGrowth') / 100
+        };
+
+        if (inp.offerPrice <= 0) throw new Error('Offer price must be positive');
+        if (inp.homeReportValue <= 0) throw new Error('Home Report value must be positive');
+        if (inp.ltv > 1) throw new Error('LTV cannot exceed 100%');
+        if (inp.mortgageTerm <= 0) throw new Error('Mortgage term must be positive');
+
+        return inp;
+    }
+
+    function computeProperty(inp) {
+        // Mortgage capped by lower of Home Report and offer
+        const mortgageBaseline = Math.min(inp.homeReportValue, inp.offerPrice);
+        const mortgage = inp.ltv * mortgageBaseline;
+        const standardDeposit = (1 - inp.ltv) * mortgageBaseline;
+        const premiumAboveHR = Math.max(0, inp.offerPrice - inp.homeReportValue);
+
+        // Taxes and fees
+        const lbtt = calcLBTT(inp.offerPrice);
+        const adsApplies = inp.bridgingMonths > 0;
+        const adsGross = adsApplies ? 0.08 * inp.offerPrice : 0;
+        const adsNet = adsApplies
+            ? adsGross * (1 - Math.pow(1 + inp.investmentReturn, -inp.bridgingMonths / 12))
+            : 0;
+        const rosDues = calcRosDues(Math.max(inp.offerPrice, inp.homeReportValue));
+
+        // Upfront cash breakdown
+        const upfrontItems = [
+            { label: 'Standard deposit', value: standardDeposit },
+            { label: 'Premium above Home Report', value: premiumAboveHR, hideIfZero: true,
+              sub: 'No mortgage covers this — must be cash' },
+            { label: 'LBTT', value: lbtt },
+            { label: 'ADS (8%, reclaimable on sale within 36 mo)', value: adsGross, hideIfZero: true,
+              sub: 'Net opportunity cost ≈ ' + formatCurrency(adsNet) },
+            { label: 'Registers of Scotland dues', value: rosDues },
+            { label: 'Purchase solicitor', value: inp.purchaseSolicitor },
+            { label: 'Additional survey', value: inp.additionalSurvey },
+            { label: 'Mortgage product fee', value: inp.mortgageProductFee },
+            { label: 'Moving costs', value: inp.movingCosts },
+            { label: 'First-year buildings insurance', value: inp.firstYearInsurance }
+        ];
+        const totalUpfront = upfrontItems.reduce((s, x) => s + x.value, 0);
+
+        // Net sale proceeds
+        const agentFeeAmount = inp.currentValue * inp.agentFee;
+        const saleItems = [
+            { label: 'Sale price', value: inp.currentValue },
+            { label: 'Outstanding mortgage', value: -inp.outstandingMortgage, hideIfZero: true },
+            { label: 'Early repayment charge', value: -inp.earlyRepaymentCharge, hideIfZero: true },
+            { label: 'Estate agent fee (' + (inp.agentFee * 100).toFixed(2) + '%)', value: -agentFeeAmount, hideIfZero: true },
+            { label: 'Sale solicitor', value: -inp.saleSolicitor, hideIfZero: true },
+            { label: 'Home Report (seller pays)', value: -inp.homeReportSeller, hideIfZero: true }
+        ];
+        const netSaleProceeds = saleItems.reduce((s, x) => s + x.value, 0);
+        const totalFunding = inp.savings + netSaleProceeds;
+        const shortfall = totalUpfront - totalFunding;
+
+        // Mortgage
+        const monthly = monthlyPayment(mortgage, inp.mortgageRate, inp.mortgageTerm, inp.interestOnly);
+
+        const stressScenarios = [
+            { label: 'At your rate', rate: inp.mortgageRate },
+            { label: 'Rate + 2pp', rate: inp.mortgageRate + 0.02 },
+            { label: 'Rate + 3pp', rate: inp.mortgageRate + 0.03 }
+        ].map(s => Object.assign(s, {
+            monthly: monthlyPayment(mortgage, s.rate, inp.mortgageTerm, inp.interestOnly)
+        }));
+
+        const lti = inp.income > 0 ? mortgage / inp.income : Infinity;
+        const ltiOverCap = lti > 4.5;
+
+        // Monthly running costs (annualised then displayed monthly)
+        const maintenanceAnnual = inp.maintenancePercent * inp.offerPrice;
+        const runningItems = [
+            { label: 'Mortgage', value: monthly * 12 },
+            { label: 'Council Tax', value: inp.councilTax },
+            { label: 'Buildings insurance', value: inp.insuranceAnnual },
+            { label: 'Factor fees', value: inp.factorFees, hideIfZero: true },
+            { label: 'Maintenance reserve', value: maintenanceAnnual, hideIfZero: true,
+              sub: (inp.maintenancePercent * 100).toFixed(2) + '% of offer price/yr' }
+        ];
+        const totalAnnualRunning = runningItems.reduce((s, x) => s + x.value, 0);
+
+        // Amortisation
+        const amortisation = generateAmortisation(mortgage, inp.mortgageRate, inp.mortgageTerm,
+                                                   inp.interestOnly, inp.offerPrice, inp.propertyGrowth);
+
+        return {
+            inp,
+            mortgage, mortgageBaseline, standardDeposit, premiumAboveHR,
+            lbtt, adsApplies, adsGross, adsNet, rosDues,
+            upfrontItems, totalUpfront,
+            saleItems, netSaleProceeds, agentFeeAmount,
+            totalFunding, shortfall,
+            monthly, stressScenarios, lti, ltiOverCap,
+            runningItems, totalAnnualRunning,
+            amortisation
+        };
+    }
+
+    function generateAmortisation(principal, annualRate, years, interestOnly, propertyValue, growth) {
+        const rows = [];
+        let balance = principal;
+        let value = propertyValue;
+        const monthly = monthlyPayment(principal, annualRate, years, interestOnly);
+        const monthlyRate = annualRate / 12;
+
+        for (let year = 1; year <= years; year++) {
+            let yearInterest = 0;
+            let yearPrincipal = 0;
+            for (let m = 0; m < 12; m++) {
+                const interest = balance * monthlyRate;
+                yearInterest += interest;
+                if (interestOnly) {
+                    // Payment = interest; principal unchanged
+                } else {
+                    const principalPaid = monthly - interest;
+                    yearPrincipal += principalPaid;
+                    balance -= principalPaid;
+                }
+            }
+            if (interestOnly && year === years) {
+                yearPrincipal = balance;
+                balance = 0;
+            }
+            value = value * (1 + growth);
+            rows.push({
+                year,
+                interest: yearInterest,
+                principal: yearPrincipal,
+                remaining: Math.max(0, balance),
+                propertyValue: value,
+                equity: value - Math.max(0, balance)
+            });
+        }
+        return rows;
+    }
+
+    function renderBreakdownRow(it) {
+        const sub = it.sub ? '<span class="sub">' + it.sub + '</span>' : '';
+        const v = it.value;
+        const display = v < 0
+            ? '−' + formatCurrency(Math.abs(v))
+            : formatCurrency(v);
+        return '<div class="breakdown-row"><span class="breakdown-label">' + it.label + sub + '</span>'
+             + '<span class="breakdown-value">' + display + '</span></div>';
+    }
+
+    function renderTotalRow(label, value, suffix) {
+        const display = formatCurrency(value) + (suffix || '');
+        return '<div class="breakdown-row total"><span class="breakdown-label">' + label + '</span>'
+             + '<span class="breakdown-value">' + display + '</span></div>';
+    }
+
+    function renderPropertyResults(r) {
+        const inp = r.inp;
+
+        document.getElementById('p-cashNeeded').textContent = formatCurrency(r.totalUpfront);
+        document.getElementById('p-cashBreakdown').innerHTML =
+            r.upfrontItems.filter(x => !x.hideIfZero || x.value > 0).map(renderBreakdownRow).join('')
+            + renderTotalRow('Total upfront', r.totalUpfront);
+
+        const fundingHtml = r.saleItems.filter(x => !x.hideIfZero || x.value !== 0).map(renderBreakdownRow).join('')
+            + renderTotalRow('Net sale proceeds', r.netSaleProceeds)
+            + renderBreakdownRow({ label: 'Cash savings', value: inp.savings })
+            + renderTotalRow('Total funding', r.totalFunding);
+        document.getElementById('p-fundingAvailable').textContent = formatCurrency(r.totalFunding);
+        document.getElementById('p-fundingBreakdown').innerHTML = fundingHtml;
+
+        const posEl = document.getElementById('p-positionWarn');
+        if (r.shortfall > 0.5) {
+            let msg = '<strong>Shortfall of ' + formatCurrency(r.shortfall) + '.</strong> '
+                + 'Raise more cash, reduce the offer, or accept a higher LTV (if your lender allows).';
+            if (r.adsApplies) {
+                msg += ' Note: net sale proceeds arrive ~' + inp.bridgingMonths + ' months after purchase day, '
+                    + 'so the day-one shortfall is even larger (' + formatCurrency(r.totalUpfront - inp.savings) + ').';
+            }
+            posEl.innerHTML = '<div class="warn-box">' + msg + '</div>';
+        } else {
+            posEl.innerHTML = '<div class="warn-box ok"><strong>Surplus of ' + formatCurrency(-r.shortfall) + '</strong> '
+                + 'after upfront costs. Could go to fees, contingency, or higher deposit.</div>';
+        }
+
+        document.getElementById('p-monthlyPayment').textContent = formatCurrency(r.monthly) + '/mo';
+        const ltvOffer = r.inp.offerPrice > 0 ? (r.mortgage / r.inp.offerPrice * 100).toFixed(1) : '—';
+        const ltvHr = r.inp.homeReportValue > 0 ? (r.mortgage / r.inp.homeReportValue * 100).toFixed(1) : '—';
+        const mortgageRows = [
+            renderBreakdownRow({ label: 'Loan amount', value: r.mortgage }),
+            '<div class="breakdown-row"><span class="breakdown-label">LTV</span>'
+                + '<span class="breakdown-value">' + ltvHr + '% of HR / ' + ltvOffer + '% of offer</span></div>',
+            '<div class="breakdown-row"><span class="breakdown-label">Term</span>'
+                + '<span class="breakdown-value">' + r.inp.mortgageTerm + ' yr ' + (r.inp.interestOnly ? '(IO)' : '(repayment)') + '</span></div>',
+            '<div class="breakdown-row"><span class="breakdown-label">Loan-to-income</span>'
+                + '<span class="breakdown-value">' + r.lti.toFixed(2) + '×' + (r.ltiOverCap ? ' ⚠' : '') + '</span></div>'
+        ];
+        document.getElementById('p-mortgageBreakdown').innerHTML = mortgageRows.join('');
+
+        const totalMonthlyRunning = r.totalAnnualRunning / 12;
+        document.getElementById('p-monthlyRunning').textContent = formatCurrency(totalMonthlyRunning) + '/mo';
+        document.getElementById('p-runningBreakdown').innerHTML =
+            r.runningItems.filter(x => !x.hideIfZero || x.value > 0).map(it => {
+                const sub = it.sub ? '<span class="sub">' + it.sub + '</span>' : '';
+                return '<div class="breakdown-row"><span class="breakdown-label">' + it.label + sub + '</span>'
+                     + '<span class="breakdown-value">' + formatCurrency(it.value / 12) + '/mo</span></div>';
+            }).join('')
+            + renderTotalRow('Total monthly', totalMonthlyRunning, '/mo');
+
+        // Stress test — assume ~30% deductions for net (rough heuristic; better than nothing)
+        const netMonthly = inp.income * 0.7 / 12;
+        document.getElementById('p-stressBody').innerHTML = r.stressScenarios.map(s => {
+            const pct = netMonthly > 0 ? ((s.monthly / netMonthly) * 100).toFixed(0) + '%' : '—';
+            return '<tr><td>' + s.label + '</td><td>' + (s.rate * 100).toFixed(2) + '%</td>'
+                + '<td>' + formatCurrency(s.monthly) + '/mo</td>'
+                + '<td>' + pct + '</td></tr>';
+        }).join('');
+
+        const ltiWarn = document.getElementById('p-ltiWarn');
+        if (r.ltiOverCap) {
+            ltiWarn.innerHTML = '<div class="warn-box">Loan-to-income is ' + r.lti.toFixed(2)
+                + '× gross. Most UK lenders cap at 4.5× under the FCA LTI flow limit — '
+                + 'this size of mortgage may be hard to secure on this income.</div>';
+        } else if (r.lti > 4) {
+            ltiWarn.innerHTML = '<div class="warn-box">Loan-to-income is ' + r.lti.toFixed(2)
+                + '× gross — close to the typical 4.5× lender cap. Worth confirming with a broker.</div>';
+        } else {
+            ltiWarn.innerHTML = '';
+        }
+    }
+
+    function renderAmortisationTable(r) {
+        const tbody = document.getElementById('p-amortBody');
+        tbody.innerHTML = r.amortisation.map(row =>
+            '<tr>'
+            + '<td>' + row.year + '</td>'
+            + '<td class="negative">−' + formatCurrency(row.interest) + '</td>'
+            + '<td class="positive">+' + formatCurrency(row.principal) + '</td>'
+            + '<td>' + formatCurrency(row.remaining) + '</td>'
+            + '<td>' + formatCurrency(row.propertyValue) + '</td>'
+            + '<td class="positive">' + formatCurrency(row.equity) + '</td>'
+            + '</tr>'
+        ).join('');
+    }
+
+    let propertyChart = null;
+    let lastPropertyResult = null;
+
+    const PROPERTY_CHART_COLORS = [
+        'rgb(180, 100, 80)',
+        'rgb(200, 140, 110)',
+        'rgb(45, 90, 74)',
+        'rgb(70, 130, 110)',
+        'rgb(100, 160, 140)'
+    ];
+
+    function propertyUpdateChart() {
+        let r = lastPropertyResult;
+        if (!r) {
+            try { r = computeProperty(getPropertyInputs()); }
+            catch (e) { return; }
+        }
+
+        const type = document.getElementById('p-sensitivityType').value;
+        const ctx = document.getElementById('propertyChart').getContext('2d');
+        if (propertyChart) propertyChart.destroy();
+
+        let config;
+
+        if (type === 'payment') {
+            const rates = [];
+            const baseRate = r.inp.mortgageRate;
+            for (let rt = Math.max(0, baseRate - 0.03); rt <= baseRate + 0.03 + 1e-9; rt += 0.005) {
+                rates.push(rt);
+            }
+            const terms = [15, 20, 25, 30, 35];
+            const datasets = terms.map((term, idx) => {
+                const data = rates.map(rt => monthlyPayment(r.mortgage, rt, term, r.inp.interestOnly));
+                const isSelected = term === r.inp.mortgageTerm;
+                return {
+                    label: term + '-yr' + (isSelected ? ' (selected)' : ''),
+                    data,
+                    borderColor: PROPERTY_CHART_COLORS[idx],
+                    backgroundColor: PROPERTY_CHART_COLORS[idx],
+                    tension: 0.3,
+                    pointRadius: isSelected ? 5 : 3,
+                    borderWidth: isSelected ? 3 : 2
+                };
+            });
+            config = {
+                type: 'line',
+                data: {
+                    labels: rates.map(rt => {
+                        const isInput = Math.abs(rt - baseRate) < 0.0025;
+                        return (rt * 100).toFixed(1) + '%' + (isInput ? '*' : '');
+                    }),
+                    datasets
+                },
+                options: chartOptions(
+                    'Monthly Mortgage Payment vs Interest Rate',
+                    'Interest rate',
+                    'Monthly payment (£)',
+                    v => formatCurrency(v),
+                    c => c.dataset.label + ': ' + formatCurrency(c.parsed.y) + '/mo'
+                )
+            };
+        } else if (type === 'upfront') {
+            const baseHR = r.inp.homeReportValue;
+            const offers = [];
+            for (let o = baseHR - 20000; o <= baseHR + 50000 + 1e-9; o += 5000) {
+                if (o > 0) offers.push(o);
+            }
+            const ltvs = [0.70, 0.75, 0.80, 0.85, 0.90];
+            const fixedFees = r.inp.purchaseSolicitor + r.inp.additionalSurvey
+                            + r.inp.mortgageProductFee + r.inp.movingCosts + r.inp.firstYearInsurance;
+            const datasets = ltvs.map((ltv, idx) => {
+                const data = offers.map(o => {
+                    const baseline = Math.min(baseHR, o);
+                    const stdDep = (1 - ltv) * baseline;
+                    const premium = Math.max(0, o - baseHR);
+                    const lbtt = calcLBTT(o);
+                    const ads = r.adsApplies ? 0.08 * o : 0;
+                    const ros = calcRosDues(Math.max(o, baseHR));
+                    return stdDep + premium + lbtt + ads + ros + fixedFees;
+                });
+                const isSelected = Math.abs(ltv - r.inp.ltv) < 0.005;
+                return {
+                    label: (ltv * 100).toFixed(0) + '% LTV' + (isSelected ? ' (selected)' : ''),
+                    data,
+                    borderColor: PROPERTY_CHART_COLORS[idx],
+                    backgroundColor: PROPERTY_CHART_COLORS[idx],
+                    tension: 0.3,
+                    pointRadius: isSelected ? 5 : 3,
+                    borderWidth: isSelected ? 3 : 2
+                };
+            });
+            config = {
+                type: 'line',
+                data: {
+                    labels: offers.map(o => {
+                        const isInput = Math.abs(o - r.inp.offerPrice) < 2500;
+                        return formatCurrency(o) + (isInput ? '*' : '');
+                    }),
+                    datasets
+                },
+                options: chartOptions(
+                    'Upfront Cash vs Offer Price (Home Report £' + baseHR.toLocaleString('en-GB') + ')',
+                    'Offer price',
+                    'Total upfront cash (£)',
+                    v => formatCurrency(v),
+                    c => c.dataset.label + ': ' + formatCurrency(c.parsed.y)
+                )
+            };
+        } else { // ads
+            const months = [1, 2, 3, 4, 5, 6, 9, 12, 18, 24, 36];
+            const returns = [0.03, 0.04, 0.05, 0.06, 0.07];
+            const adsGross = 0.08 * r.inp.offerPrice;
+            const datasets = returns.map((ret, idx) => {
+                const data = months.map(m => adsGross * (1 - Math.pow(1 + ret, -m / 12)));
+                const isSelected = Math.abs(ret - r.inp.investmentReturn) < 0.005;
+                return {
+                    label: (ret * 100).toFixed(0) + '% return' + (isSelected ? ' (selected)' : ''),
+                    data,
+                    borderColor: PROPERTY_CHART_COLORS[idx],
+                    backgroundColor: PROPERTY_CHART_COLORS[idx],
+                    tension: 0.3,
+                    pointRadius: isSelected ? 5 : 3,
+                    borderWidth: isSelected ? 3 : 2
+                };
+            });
+            config = {
+                type: 'line',
+                data: {
+                    labels: months.map(m => m + ' mo'),
+                    datasets
+                },
+                options: chartOptions(
+                    'Net ADS Cost vs Bridging Gap (gross ADS: ' + formatCurrency(adsGross) + ')',
+                    'Months until previous property sells',
+                    'Net ADS cost (£)',
+                    v => formatCurrency(v),
+                    c => c.dataset.label + ': ' + formatCurrency(c.parsed.y)
+                )
+            };
+        }
+
+        propertyChart = new Chart(ctx, config);
+    }
+
+    function chartOptions(title, xLabel, yLabel, yTickFmt, tooltipLabelFmt) {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+                title: { display: true, text: title, font: { size: 14, family: "'Crimson Pro', serif" } },
+                legend: { position: 'top' },
+                tooltip: { callbacks: { label: tooltipLabelFmt } }
+            },
+            scales: {
+                x: { title: { display: true, text: xLabel } },
+                y: { title: { display: true, text: yLabel }, ticks: { callback: yTickFmt } }
+            }
+        };
+    }
+
+    function propertyCalculate() {
+        try {
+            const inp = getPropertyInputs();
+            const r = computeProperty(inp);
+            lastPropertyResult = r;
+            renderPropertyResults(r);
+            propertyUpdateChart();
+            renderAmortisationTable(r);
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function propertyDownloadCSV() {
+        try {
+            const inp = getPropertyInputs();
+            const r = computeProperty(inp);
+
+            const rows = [
+                ['Property Move Planner - Scotland'],
+                [''],
+                ['Inputs'],
+                ['Current property value', inp.currentValue],
+                ['Outstanding mortgage', inp.outstandingMortgage],
+                ['Early repayment charge', inp.earlyRepaymentCharge],
+                ['Estate agent fee %', (inp.agentFee * 100).toFixed(2)],
+                ['Sale solicitor', inp.saleSolicitor],
+                ['Home Report (sell)', inp.homeReportSeller],
+                ['Cash savings', inp.savings],
+                ['Annual income', inp.income],
+                ['Home Report value (target)', inp.homeReportValue],
+                ['Offer price', inp.offerPrice],
+                ['LTV %', (inp.ltv * 100).toFixed(2)],
+                ['Bridging months', inp.bridgingMonths],
+                ['Mortgage term (years)', inp.mortgageTerm],
+                ['Mortgage rate %', (inp.mortgageRate * 100).toFixed(2)],
+                ['Interest only', inp.interestOnly ? 'Yes' : 'No'],
+                [''],
+                ['Upfront cash breakdown'],
+                ...r.upfrontItems.filter(x => !x.hideIfZero || x.value > 0).map(it => [it.label, it.value.toFixed(2)]),
+                ['Total upfront', r.totalUpfront.toFixed(2)],
+                [''],
+                ['Funding'],
+                ...r.saleItems.filter(x => !x.hideIfZero || x.value !== 0).map(it => [it.label, it.value.toFixed(2)]),
+                ['Net sale proceeds', r.netSaleProceeds.toFixed(2)],
+                ['Cash savings', inp.savings.toFixed(2)],
+                ['Total funding', r.totalFunding.toFixed(2)],
+                ['Shortfall (+) / Surplus (-)', r.shortfall.toFixed(2)],
+                [''],
+                ['Mortgage'],
+                ['Loan amount', r.mortgage.toFixed(2)],
+                ['Monthly payment', r.monthly.toFixed(2)],
+                ['Loan-to-income (x)', r.lti.toFixed(2)],
+                [''],
+                ['Stress test'],
+                ['Scenario', 'Rate %', 'Monthly £'],
+                ...r.stressScenarios.map(s => [s.label, (s.rate * 100).toFixed(2), s.monthly.toFixed(2)]),
+                [''],
+                ['Monthly running costs (annual £)'],
+                ...r.runningItems.filter(x => !x.hideIfZero || x.value > 0).map(it => [it.label, it.value.toFixed(2)]),
+                ['Total annual', r.totalAnnualRunning.toFixed(2)],
+                ['Total monthly', (r.totalAnnualRunning / 12).toFixed(2)],
+                [''],
+                ['Amortisation'],
+                ['Year', 'Interest', 'Principal', 'Remaining', 'Property value', 'Equity'],
+                ...r.amortisation.map(row => [
+                    row.year,
+                    row.interest.toFixed(2),
+                    row.principal.toFixed(2),
+                    row.remaining.toFixed(2),
+                    row.propertyValue.toFixed(2),
+                    row.equity.toFixed(2)
+                ])
+            ];
+
+            const csv = rows.map(row => Array.isArray(row) ? row.join(',') : row).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'property_move_plan.csv';
+            link.click();
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function renderMath() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         if (checkAccess()) {
-            renderMathInElement(document.body, {
-                delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true}
-                ],
-                throwOnError: false
-            });
-
-            calculate();
+            renderMath();
+            renderRoute();
         }
     });
 
     window.addEventListener('hashchange', function() {
         if (checkAccess()) {
+            renderRoute();
+        } else {
             location.reload();
         }
     });
