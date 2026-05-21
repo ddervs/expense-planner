@@ -1401,7 +1401,7 @@
                 <h3>Affordability stress test</h3>
                 <table class="stress-test">
                     <thead>
-                        <tr><th>Scenario</th><th>Rate</th><th>Monthly</th><th>% of net income</th></tr>
+                        <tr><th>Scenario</th><th>Rate</th><th>Mortgage £</th><th>Total housing % of net</th></tr>
                     </thead>
                     <tbody id="p-stressBody"></tbody>
                 </table>
@@ -1545,7 +1545,68 @@
 
                     <p>Separately, lenders run affordability stress tests at rates above the offered product rate. This tool shows the monthly payment at the chosen rate, plus +2 and +3 percentage points, so you can see the impact of a rate shock similar to 2022's. As a rough check, total housing cost is often advised to stay below ~35% of net monthly income.</p>
 
-                    <h3>6. Registers of Scotland Registration Dues</h3>
+                    <h3>6. Scottish PAYE Net Income</h3>
+                    <p>The affordability percentage compares total monthly housing costs to <strong>net</strong> monthly income, since housing bills come out of take-home pay (not gross). The tool assumes <strong>100% of income is PAYE</strong> employment income for a Scottish taxpayer.</p>
+
+                    <p><strong>Scottish income tax 2026/27</strong> (rates set by Holyrood; personal allowance and NI set at Westminster):</p>
+                    <table class="example-table">
+                        <thead><tr><th>Band</th><th>Income</th><th>Rate</th></tr></thead>
+                        <tbody>
+                            <tr><td>Personal allowance</td><td>£0 to £12,570</td><td>0%</td></tr>
+                            <tr><td>Starter</td><td>£12,571 to £16,537</td><td>19%</td></tr>
+                            <tr><td>Basic</td><td>£16,538 to £29,526</td><td>20%</td></tr>
+                            <tr><td>Intermediate</td><td>£29,527 to £43,662</td><td>21%</td></tr>
+                            <tr><td>Higher</td><td>£43,663 to £75,000</td><td>42%</td></tr>
+                            <tr><td>Advanced</td><td>£75,001 to £125,140</td><td>45%</td></tr>
+                            <tr><td>Top</td><td>Over £125,140</td><td>48%</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p>The personal allowance is reduced by £1 for every £2 of gross income above £100,000, reaching zero at £125,140 (this taper is a UK rule, not a devolved one).</p>
+
+                    <p><strong>Class 1 employee National Insurance 2026/27</strong> (UK-wide, not devolved):</p>
+                    <table class="example-table">
+                        <thead><tr><th>Range</th><th>Rate</th></tr></thead>
+                        <tbody>
+                            <tr><td>Up to £12,570 (Primary Threshold)</td><td>0%</td></tr>
+                            <tr><td>£12,571 to £50,270</td><td>8%</td></tr>
+                            <tr><td>Above £50,270 (Upper Earnings Limit)</td><td>2%</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p>For gross annual income \(G\), the effective personal allowance is:</p>
+                    <div class="formula-box">
+                        $$A(G) = \max\bigl(0,\; 12{,}570 - \tfrac{1}{2}\max(0, G - 100{,}000)\bigr)$$
+                    </div>
+
+                    <p>Income tax is the sum of band widths \(w_j\) at rates \(t_j\) applied to taxable income \(T = G - A(G)\):</p>
+                    <div class="formula-box">
+                        $$\text{Tax}(G) = \sum_j \min\bigl(\max(T - W_{j-1}, 0),\; w_j\bigr) \cdot t_j$$
+                    </div>
+                    <p>where \(W_j = \sum_{k \le j} w_k\) is the cumulative band edge.</p>
+
+                    <p>Employee NI follows the same band pattern, but on gross income (no allowance adjustment):</p>
+                    <div class="formula-box">
+                        $$\text{NI}(G) = 0.08 \cdot \max\bigl(0, \min(G, 50{,}270) - 12{,}570\bigr) + 0.02 \cdot \max\bigl(0, G - 50{,}270\bigr)$$
+                    </div>
+
+                    <p>Net monthly take-home is then:</p>
+                    <div class="formula-box">
+                        $$\text{Net}_\text{monthly}(G) = \frac{G - \text{Tax}(G) - \text{NI}(G)}{12}$$
+                    </div>
+
+                    <p><strong>Worked example</strong> at gross £80,000:</p>
+                    <ul>
+                        <li>Personal allowance = £12,570 (full, since under £100k)</li>
+                        <li>Taxable = £67,430. Income tax: £3,967 at 19% + £12,989 at 20% + £14,136 at 21% + £31,338 at 42% + £5,000 at 45% = £753.73 + £2,597.80 + £2,968.56 + £13,161.96 + £2,250 = <strong>£21,732.05</strong></li>
+                        <li>NI: £37,700 at 8% + £29,730 at 2% = £3,016 + £594.60 = <strong>£3,610.60</strong></li>
+                        <li>Net annual = £80,000 minus £21,732.05 minus £3,610.60 = <strong>£54,657.35</strong></li>
+                        <li>Net monthly = <strong>£4,554.78</strong></li>
+                    </ul>
+
+                    <p><strong>Caveats.</strong> The model ignores pension contributions (which reduce taxable income), student loan repayments, salary sacrifice, the Marriage Allowance, Scottish dividend and savings tax treatment, and self-employed Class 2/4 NI. Treat the net figure as a sensible upper bound for take-home given your gross.</p>
+
+                    <h3>7. Registers of Scotland Registration Dues</h3>
                     <p>Registers of Scotland charges a banded registration fee when a transfer of ownership is recorded, based on the greater of consideration paid and property value:</p>
 
                     <table class="example-table">
@@ -1566,7 +1627,7 @@
                         </tbody>
                     </table>
 
-                    <h3>7. Sources</h3>
+                    <h3>8. Sources</h3>
                     <ul>
                         <li><a href="https://revenue.scot/taxes/land-buildings-transaction-tax/residential-property" target="_blank" rel="noopener">LBTT residential rates &mdash; Revenue Scotland</a></li>
                         <li><a href="https://revenue.scot/taxes/land-buildings-transaction-tax/additional-dwelling-supplement-ads" target="_blank" rel="noopener">Additional Dwelling Supplement (ADS) &mdash; Revenue Scotland</a></li>
@@ -1574,6 +1635,9 @@
                         <li><a href="https://www.gov.scot/publications/scottish-budget-2026-2027-scottish-tax-ready-reckoners/pages/4/" target="_blank" rel="noopener">LBTT &mdash; Scottish Budget 2026&ndash;27, gov.scot</a></li>
                         <li><a href="https://kb.ros.gov.uk/fees/registration-fees" target="_blank" rel="noopener">Registration fees &mdash; Registers of Scotland</a></li>
                         <li><a href="https://www.legislation.gov.uk/sdsi/2021/9780111048962" target="_blank" rel="noopener">Registers of Scotland (Fees) Amendment Order 2021</a></li>
+                        <li><a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener">Scottish income tax rates and bands 2026 to 2027, gov.scot</a></li>
+                        <li><a href="https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/" target="_blank" rel="noopener">Scottish income tax 2026/27 technical factsheet, gov.scot</a></li>
+                        <li><a href="https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027" target="_blank" rel="noopener">National Insurance rates and thresholds 2026/27, gov.uk</a></li>
                     </ul>
                 </div>
             </div>
@@ -2077,6 +2141,53 @@
     ];
     const ROS_FEE_TOP = 8250;
 
+    // Scottish income tax 2026/27 (gov.scot). Bands defined as widths above the
+    // personal allowance, in order: starter, basic, intermediate, higher, advanced, top.
+    const UK_PERSONAL_ALLOWANCE = 12570;
+    const SCOT_TAX_BANDS = [
+        { width: 16537 - 12570, rate: 0.19 },  // starter
+        { width: 29526 - 16537, rate: 0.20 },  // basic
+        { width: 43662 - 29526, rate: 0.21 },  // intermediate
+        { width: 75000 - 43662, rate: 0.42 },  // higher
+        { width: 125140 - 75000, rate: 0.45 }, // advanced
+        { width: Infinity,       rate: 0.48 }  // top
+    ];
+
+    // Class 1 employee National Insurance 2026/27 (HMRC).
+    const NI_PRIMARY_THRESHOLD = 12570;
+    const NI_UPPER_EARNINGS_LIMIT = 50270;
+    const NI_MAIN_RATE = 0.08;
+    const NI_UPPER_RATE = 0.02;
+
+    function scottishPaye(gross) {
+        if (gross <= 0) return { gross: 0, incomeTax: 0, ni: 0, net: 0 };
+
+        // Personal allowance tapers by £1 per £2 above £100k, gone at £125,140.
+        const taperReduction = Math.max(0, (gross - 100000) / 2);
+        const personalAllowance = Math.max(0, UK_PERSONAL_ALLOWANCE - taperReduction);
+        let taxable = Math.max(0, gross - personalAllowance);
+
+        let incomeTax = 0;
+        for (const band of SCOT_TAX_BANDS) {
+            if (taxable <= 0) break;
+            const slice = Math.min(taxable, band.width);
+            incomeTax += slice * band.rate;
+            taxable -= slice;
+        }
+
+        let ni = 0;
+        if (gross > NI_PRIMARY_THRESHOLD) {
+            const mainBand = Math.min(gross, NI_UPPER_EARNINGS_LIMIT) - NI_PRIMARY_THRESHOLD;
+            ni += mainBand * NI_MAIN_RATE;
+            if (gross > NI_UPPER_EARNINGS_LIMIT) {
+                ni += (gross - NI_UPPER_EARNINGS_LIMIT) * NI_UPPER_RATE;
+            }
+        }
+
+        const net = gross - incomeTax - ni;
+        return { gross, incomeTax, ni, net, personalAllowance };
+    }
+
     function calcLBTT(price) {
         let tax = 0;
         for (const [lower, upper, rate] of LBTT_BANDS) {
@@ -2204,6 +2315,8 @@
         const lti = inp.income > 0 ? mortgage / inp.income : Infinity;
         const ltiOverCap = lti > 4.5;
 
+        const paye = scottishPaye(inp.income);
+
         // Monthly running costs (annualised then displayed monthly)
         const maintenanceAnnual = inp.maintenancePercent * inp.offerPrice;
         const runningItems = [
@@ -2229,6 +2342,7 @@
             totalFunding, shortfall,
             monthly, stressScenarios, lti, ltiOverCap,
             runningItems, totalAnnualRunning,
+            paye,
             amortisation
         };
     }
@@ -2331,22 +2445,48 @@
         document.getElementById('p-mortgageBreakdown').innerHTML = mortgageRows.join('');
 
         const totalMonthlyRunning = r.totalAnnualRunning / 12;
+        const netMonthly = r.paye.net / 12;
+        const runningPct = netMonthly > 0 ? (totalMonthlyRunning / netMonthly) * 100 : null;
         document.getElementById('p-monthlyRunning').textContent = formatCurrency(totalMonthlyRunning) + '/mo';
-        document.getElementById('p-runningBreakdown').innerHTML =
-            r.runningItems.filter(x => !x.hideIfZero || x.value > 0).map(it => {
-                const sub = it.sub ? '<span class="sub">' + it.sub + '</span>' : '';
-                return '<div class="breakdown-row"><span class="breakdown-label">' + it.label + sub + '</span>'
-                     + '<span class="breakdown-value">' + formatCurrency(it.value / 12) + '/mo</span></div>';
-            }).join('')
-            + renderTotalRow('Total monthly', totalMonthlyRunning, '/mo');
 
-        // Stress test — assume ~30% deductions for net (rough heuristic; better than nothing)
-        const netMonthly = inp.income * 0.7 / 12;
+        let runningHtml = r.runningItems.filter(x => !x.hideIfZero || x.value > 0).map(it => {
+            const sub = it.sub ? '<span class="sub">' + it.sub + '</span>' : '';
+            return '<div class="breakdown-row"><span class="breakdown-label">' + it.label + sub + '</span>'
+                 + '<span class="breakdown-value">' + formatCurrency(it.value / 12) + '/mo</span></div>';
+        }).join('') + renderTotalRow('Total monthly', totalMonthlyRunning, '/mo');
+
+        if (inp.income > 0) {
+            const effectiveRate = ((inp.income - r.paye.net) / inp.income) * 100;
+            runningHtml += '<div class="breakdown-row"><span class="breakdown-label">Net monthly income'
+                + '<span class="sub">PAYE Scotland 2026/27; effective rate '
+                + effectiveRate.toFixed(1) + '%</span></span>'
+                + '<span class="breakdown-value">' + formatCurrency(netMonthly) + '/mo</span></div>';
+            const pctClass = runningPct >= 50 ? ' negative' : (runningPct < 35 ? ' positive' : '');
+            runningHtml += '<div class="breakdown-row"><span class="breakdown-label">Share of net income</span>'
+                + '<span class="breakdown-value' + pctClass + '">' + runningPct.toFixed(0) + '%</span></div>';
+            if (runningPct >= 50) {
+                runningHtml += '<div class="warn-box">Running costs are ' + runningPct.toFixed(0)
+                    + '% of net income. Tight: little headroom for non-housing spending or savings.</div>';
+            } else if (runningPct >= 40) {
+                runningHtml += '<div class="warn-box">Running costs are ' + runningPct.toFixed(0)
+                    + '% of net income. Above the ~35% rule-of-thumb; workable but worth checking other commitments.</div>';
+            }
+        } else {
+            runningHtml += '<div class="breakdown-row"><span class="breakdown-label">Net monthly income'
+                + '<span class="sub">Enter annual income to see affordability ratio</span></span>'
+                + '<span class="breakdown-value">—</span></div>';
+        }
+        document.getElementById('p-runningBreakdown').innerHTML = runningHtml;
+
         document.getElementById('p-stressBody').innerHTML = r.stressScenarios.map(s => {
-            const pct = netMonthly > 0 ? ((s.monthly / netMonthly) * 100).toFixed(0) + '%' : '—';
+            const totalStressMonthly = s.monthly + (totalMonthlyRunning - r.monthly);
+            const pct = netMonthly > 0 ? ((totalStressMonthly / netMonthly) * 100).toFixed(0) + '%' : '—';
+            const pctCell = netMonthly > 0 && totalStressMonthly / netMonthly >= 0.5
+                ? '<td class="negative">' + pct + '</td>'
+                : '<td>' + pct + '</td>';
             return '<tr><td>' + s.label + '</td><td>' + (s.rate * 100).toFixed(2) + '%</td>'
                 + '<td>' + formatCurrency(s.monthly) + '/mo</td>'
-                + '<td>' + pct + '</td></tr>';
+                + pctCell + '</tr>';
         }).join('');
 
         const ltiWarn = document.getElementById('p-ltiWarn');
@@ -2599,6 +2739,15 @@
                 ...r.runningItems.filter(x => !x.hideIfZero || x.value > 0).map(it => [it.label, it.value.toFixed(2)]),
                 ['Total annual', r.totalAnnualRunning.toFixed(2)],
                 ['Total monthly', (r.totalAnnualRunning / 12).toFixed(2)],
+                [''],
+                ['PAYE (Scotland 2026/27, assumes 100% PAYE income)'],
+                ['Gross annual', r.paye.gross.toFixed(2)],
+                ['Income tax', r.paye.incomeTax.toFixed(2)],
+                ['National Insurance', r.paye.ni.toFixed(2)],
+                ['Net annual', r.paye.net.toFixed(2)],
+                ['Net monthly', (r.paye.net / 12).toFixed(2)],
+                ['Running cost share of net monthly %',
+                    r.paye.net > 0 ? (((r.totalAnnualRunning / 12) / (r.paye.net / 12)) * 100).toFixed(1) : ''],
                 [''],
                 ['Amortisation'],
                 ['Year', 'Interest', 'Principal', 'Remaining', 'Property value', 'Equity'],
